@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import type { Repo } from "@/stores/github";
+  import type { Repo } from '@/model/Repo';
   const { repo } = defineProps<{
     repo: Repo
   }>()

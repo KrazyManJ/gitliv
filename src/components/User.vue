@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    import type { GithubUserData } from '@/stores/github';
+    import type { GithubUser } from '@/model/GithubUser';
 
     const { user } = defineProps<{
-        user: GithubUserData
+        user: GithubUser
     }>()
 </script>
 

@@ -2,36 +2,19 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
 import {reactive} from "vue";
-
-export interface GithubUserData {
-  name: string
-  bio: string
-  avatar_url: string
-}
-
-interface GithubUser {
-  user: GithubUserData | null
-}
-
-export interface Repo {
-  id: number
-  name: string
-  description: string
-  language: string
-  updated_at: string
-}
-
+import type { GithubUser } from '../model/GithubUser';
+import type { Repo } from '../model/Repo';
 
 export const useGithubStore = defineStore('github', () => {
 
   const BASE_URL = 'https://api.github.com'
   const username = 'krazymanj'
 
-  const user = reactive<GithubUser>({ user: null })
+  const user = reactive<{current: GithubUser | null}>({ current: null })
   const repos = reactive<Repo[]>([])
 
-  axios.get(`${BASE_URL}/users/${username}`).then(response => {
-    user.user = response.data
+  axios.get<GithubUser | null>(`${BASE_URL}/users/${username}`).then(response => {
+    user.current = response.data
   })
 
   axios.get<Repo[]>(`${BASE_URL}/users/${username}/repos`).then(response => {

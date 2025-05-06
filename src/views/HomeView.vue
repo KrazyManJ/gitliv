@@ -7,7 +7,7 @@
 
 <template>
   <main class="p-8 flex flex-col gap-8">
-    <User v-if="user.user" :user="user.user"></User>
+    <User v-if="user.current" :user="user.current"></User>
     <div class="grid grid-cols-3 gap-8">
         <Repository v-for="repo in repos" :key="repo.id" :repo="repo"/>
     </div>
