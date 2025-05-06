@@ -1,0 +1,6 @@
+@import './tailwind.css';
+
+#app {
+    // Yes you can use this as well :o
+    @apply bg-zinc-200
+}
