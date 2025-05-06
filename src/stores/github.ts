@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import {reactive} from "vue";
 
-interface GithubUserData {
+export interface GithubUserData {
   name: string
   bio: string
   avatar_url: string
@@ -18,10 +18,11 @@ export interface Repo {
   name: string
   description: string
   language: string
+  updated_at: string
 }
 
 
-export const useGithubUserStore = defineStore('githubUser', () => {
+export const useGithubStore = defineStore('github', () => {
 
   const BASE_URL = 'https://api.github.com'
   const username = 'krazymanj'
@@ -33,9 +34,11 @@ export const useGithubUserStore = defineStore('githubUser', () => {
     user.user = response.data
   })
 
-  axios.get(`${BASE_URL}/users/${username}/repos`).then(response => {
+  axios.get<Repo[]>(`${BASE_URL}/users/${username}/repos`).then(response => {
     repos.splice(0,repos.length)
-    response.data.forEach((repo: Repo) => repos.push(repo))
+    response.data
+      .sort((a,b) => -a.updated_at.localeCompare(b.updated_at))
+      .forEach((repo: Repo) => repos.push(repo))
   })
 
   return { user, repos }

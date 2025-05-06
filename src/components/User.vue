@@ -1,0 +1,17 @@
+<script setup lang="ts">
+    import type { GithubUserData } from '@/stores/github';
+
+    const { user } = defineProps<{
+        user: GithubUserData
+    }>()
+</script>
+
+<template>
+    <div class="flex gap-8 items-center bg-zinc-50 rounded-2xl overflow-hidden p-4 justify-center border border-zinc-300">
+        <img :src="user.avatar_url" width="128" height="128" class="rounded-xl">
+        <div class="flex flex-col gap-1">
+            <h1 class="text-4xl font-bold">{{ user.name }}</h1>
+            <span class="text-zinc-500 text-lg">{{ user.bio }}</span>
+        </div>
+    </div>
+</template>

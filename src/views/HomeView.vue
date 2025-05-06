@@ -1,26 +1,15 @@
 <script setup lang="ts">
-  import { useGithubUserStore } from "@/stores/github-user.ts"
-  import {onUpdated} from "vue";
+  import { useGithubStore } from "@/stores/github"
   import Repository from "@/components/Repository.vue";
-  const { user, repos } = useGithubUserStore()
-
-  onUpdated(() => {
-    console.log(user.user)
-    if (repos.length > 0)
-      console.log(repos[0])
-  })
+  import User from "@/components/User.vue";
+  const { user, repos } = useGithubStore()
 </script>
 
 <template>
-  <main>
-    <div v-if="user.user">
-      <div>{{ user.user.name }}</div>
-      <div>{{ user.user.bio }}</div>
-    </div>
-    <div style="margin-top: 4em">
-      <div v-for="repo in repos" :key="repo.id">
-        <Repository :repo="repo" />
-      </div>
+  <main class="p-8 flex flex-col gap-8">
+    <User v-if="user.user" :user="user.user"></User>
+    <div class="grid grid-cols-3 gap-8">
+        <Repository v-for="repo in repos" :key="repo.id" :repo="repo"/>
     </div>
   </main>
 </template>

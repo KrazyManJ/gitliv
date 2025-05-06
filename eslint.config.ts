@@ -15,7 +15,6 @@ export default defineConfigWithVueTs(
     name: 'app/files-to-lint',
     files: ['**/*.{ts,mts,tsx,vue}'],
   },
-
   globalIgnores(['**/dist/**', '**/dist-ssr/**', '**/coverage/**']),
 
   pluginVue.configs['flat/essential'],
@@ -29,4 +28,11 @@ export default defineConfigWithVueTs(
       'cypress/support/**/*.{js,ts,jsx,tsx}'
     ],
   },
+
+  {
+    rules: {
+      'vue/multi-word-component-names': 'off',
+      'vue.lint.unknownAtRules': 'off'
+    }
+  }
 )
