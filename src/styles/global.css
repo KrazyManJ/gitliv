@@ -4,3 +4,7 @@
     // Yes you can use this as well :o
     @apply bg-zinc-200
 }
+
+* {
+    @apply text-zinc-900
+}

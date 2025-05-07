@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import type { GithubUser } from '@/model/GithubUser';
+    import type GithubUser from '@/model/GithubUser';
 
     const { user } = defineProps<{
         user: GithubUser

@@ -1,8 +1,7 @@
-
-export interface Repo {
-  id: number;
-  name: string;
-  description: string;
-  language: string;
-  updated_at: string;
+export default interface Repo {
+    id: number;
+    name: string;
+    description: string;
+    language: string;
+    updated_at: string;
 }

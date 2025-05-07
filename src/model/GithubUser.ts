@@ -1,6 +1,5 @@
-
-export interface GithubUser {
-  name: string;
-  bio: string;
-  avatar_url: string;
+export default interface GithubUser {
+    name: string;
+    bio: string;
+    avatar_url: string;
 }
