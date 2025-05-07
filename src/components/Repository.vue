@@ -1,8 +1,22 @@
 <script setup lang="ts">
 import type Repo from "@/model/Repo";
+import { useLinguistStore } from "@/stores/linguist";
+import { ref } from "vue";
 const { repo } = defineProps<{
     repo: Repo;
 }>();
+
+const { getLanguageData } = useLinguistStore()
+
+const langColor = ref("var(--color-zinc-500)")
+
+getLanguageData(repo.language)
+    .then(langData => {
+        if (langData){
+            langColor.value = langData.color
+        }
+    })
+
 </script>
 
 <template>
@@ -16,8 +30,8 @@ const { repo } = defineProps<{
             </p>
             <p v-else class="italic">No description provided</p>
         </div>
-        <div class="ml-2 flex gap-2 items-center">
-            <div class="rounded-full w-4 h-4 bg-zinc-900"></div>
+        <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
+            <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
             {{ repo.language }}
         </div>
     </div>
