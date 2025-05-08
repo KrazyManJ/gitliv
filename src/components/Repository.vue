@@ -6,21 +6,21 @@ const { repo } = defineProps<{
     repo: Repo;
 }>();
 
-const { getLanguageData } = useLinguistStore()
+const { getLanguageData } = useLinguistStore();
 
-const langColor = ref("var(--color-zinc-500)")
+const langColor = ref("var(--color-zinc-500)");
 
-getLanguageData(repo.language)
-    .then(langData => {
-        if (langData){
-            langColor.value = langData.color
-        }
-    })
-
+getLanguageData(repo.language).then((langData) => {
+    if (langData) {
+        langColor.value = langData.color;
+    }
+});
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-300 dark:bg-zinc-800 dark:border-zinc-600">
+    <div
+        class="flex flex-col gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700"
+    >
         <h3 class="text-xl font-bold">
             {{ repo.name }}
         </h3>
