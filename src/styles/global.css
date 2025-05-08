@@ -1,20 +1,19 @@
-@import './tailwind.css';
+@import "./tailwind.css";
 
-#app {
-    /* Yes you can use this as well :o */
-    @apply bg-zinc-100;
-}
-
-* {
-    @apply text-zinc-900;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer theme {
     #app {
-        @apply bg-zinc-900;
+        @apply bg-zinc-100;
     }
 
     * {
+        @apply text-zinc-900;
+    }
+
+    #app.dark {
+        @apply bg-zinc-900;
+    }
+
+    #app.dark * {
         @apply text-zinc-100;
     }
 }

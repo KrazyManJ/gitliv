@@ -2,6 +2,7 @@
 import { useGithubStore } from "@/stores/github";
 import Repository from "@/components/Repository.vue";
 import User from "@/components/User.vue";
+import ThemePicker from "@/components/ThemePicker.vue";
 const { user, repos } = useGithubStore();
 </script>
 
@@ -11,5 +12,6 @@ const { user, repos } = useGithubStore();
         <div class="grid grid-cols-3 gap-8">
             <Repository v-for="repo in repos" :key="repo.id" :repo="repo" />
         </div>
+        <ThemePicker />
     </main>
 </template>
