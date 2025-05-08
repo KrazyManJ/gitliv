@@ -20,7 +20,7 @@ getLanguageData(repo.language)
 </script>
 
 <template>
-    <div class="flex flex-col gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-300">
+    <div class="flex flex-col gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-300 dark:bg-zinc-800 dark:border-zinc-600">
         <h3 class="text-xl font-bold">
             {{ repo.name }}
         </h3>
