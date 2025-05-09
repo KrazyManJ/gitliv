@@ -2,6 +2,7 @@
 import { useThemeStore } from "@/stores/theme";
 import { MonitorSmartphone, Moon, Sun } from "lucide-vue-next";
 import { storeToRefs } from "pinia";
+import Tile from "./Tile.vue";
 
 const { theme } = storeToRefs(useThemeStore());
 
@@ -13,17 +14,15 @@ const themeDef = {
 </script>
 
 <template>
-    <div
-        class="dark:bg-zinc-800 border border-zinc-300 bg-zinc-50 dark:border-zinc-600 rounded-2xl p-8 flex flex-col gap-4"
-    >
+    <Tile class="flex flex-col gap-4">
         <h1 class="text-xl">Theme setting</h1>
         <div class="flex gap-4">
-            <button
-                type="button"
+            <Tile
                 v-for="(Icon, themeVal) of themeDef"
                 :key="themeVal"
-                class="dark:bg-zinc-700 border dark:border-zinc-600 grow basis-1 p-2 flex flex-col items-center gap-2 rounded-xl border-zinc-300 bg-zinc-100 py-6"
+                class="flex flex-col grow basis-1 items-center gap-2 cursor-pointer"
                 @click="() => (theme = themeVal)"
+                variant="secondary"
             >
                 <component :is="Icon" :size="48" />
                 <div>
@@ -32,18 +31,7 @@ const themeDef = {
                         (current)
                     </span>
                 </div>
-            </button>
+            </Tile>
         </div>
-    </div>
+    </Tile>
 </template>
-
-<style scoped>
-.lolec {
-    width: 0;
-    transition: width 1s;
-}
-
-.btn:hover .lolec {
-    width: 100px;
-}
-</style>

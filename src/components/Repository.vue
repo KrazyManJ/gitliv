@@ -2,6 +2,7 @@
 import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
 import { ref } from "vue";
+import Tile from "./Tile.vue";
 const { repo } = defineProps<{
     repo: Repo;
 }>();
@@ -18,21 +19,21 @@ getLanguageData(repo.language).then((langData) => {
 </script>
 
 <template>
-    <div
-        class="flex flex-col gap-4 bg-zinc-50 p-4 rounded-2xl border border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700"
-    >
-        <h3 class="text-xl font-bold">
-            {{ repo.name }}
-        </h3>
-        <div class="grow">
-            <p v-if="repo.description">
-                {{ repo.description }}
-            </p>
-            <p v-else class="italic">No description provided</p>
-        </div>
-        <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
-            <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
-            {{ repo.language }}
-        </div>
-    </div>
+    <a :href="repo.svn_url" target="_blank" class="flex">
+        <Tile class="flex flex-col gap-4 grow">
+            <h3 class="text-xl font-bold">
+                {{ repo.name }}
+            </h3>
+            <div class="grow">
+                <p v-if="repo.description">
+                    {{ repo.description }}
+                </p>
+                <p v-else class="italic">No description provided</p>
+            </div>
+            <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
+                <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
+                {{ repo.language }}
+            </div>
+        </Tile>
+    </a>
 </template>
