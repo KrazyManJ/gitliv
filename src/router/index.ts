@@ -6,7 +6,7 @@ const router = createRouter({
     routes: [
         {
             path: "/",
-            name: "home",
+            name: "Home",
             component: HomeView,
         },
         // {
@@ -18,6 +18,11 @@ const router = createRouter({
         //   component: () => import('../views/AboutView.vue'),
         // },
     ],
+});
+
+router.beforeEach((to, from, next) => {
+    if (to.name) document.title = `${to.name.toString()} | GitLiv`;
+    next();
 });
 
 export default router;

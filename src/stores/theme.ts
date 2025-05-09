@@ -3,8 +3,18 @@ import { computed, ref, watch } from "vue";
 
 type Theme = "dark" | "light" | "system";
 
+const THEME_STORAGE_KEY = "theme";
+
+export const initializeTheme = () => {
+    (document.getElementById("app") as HTMLElement).classList.toggle(
+        "dark",
+        localStorage.theme === "dark" ||
+            (!(THEME_STORAGE_KEY in localStorage) &&
+                window.matchMedia("(prefers-color-scheme: dark)").matches)
+    );
+};
+
 export const useThemeStore = defineStore("theme", () => {
-    const THEME_STORAGE_KEY = "theme";
     const COLOR_SCHEME_MEDIA_SELECTOR = "(prefers-color-scheme: dark)";
 
     const theme = ref<Theme>(
@@ -48,9 +58,9 @@ export const useThemeStore = defineStore("theme", () => {
     });
 
     return {
-        /* Current theme as reference, can change value to change theme preferences */
+        /** Current theme as reference, can change value to change theme preferences */
         theme,
-        /* Returns if current theme is a dark theme */
+        /** Returns if current theme is a dark theme */
         isDark,
     };
 });
