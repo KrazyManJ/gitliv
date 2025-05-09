@@ -8,7 +8,7 @@ const { user, repos } = useGithubStore();
 
 <template>
     <main class="p-8 flex flex-col gap-8">
-        <User v-if="user.current" :user="user.current"></User>
+        <User v-if="user.current" :user="user.current" />
         <div class="grid grid-cols-3 gap-8">
             <Repository v-for="repo in repos" :key="repo.id" :repo="repo" />
         </div>

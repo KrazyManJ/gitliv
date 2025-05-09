@@ -4,4 +4,5 @@ export default interface Repo {
     description: string;
     language: string;
     updated_at: string;
+    svn_url: string;
 }
