@@ -4,7 +4,7 @@ import LoginSuccessView from "@/views/LoginSuccessView.vue";
 import RepositoryCommitsView from "@/views/RepositoryCommitsView.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import CreateRepository from "@/views/CreateRepository.vue";
-import RepositoryView from "../views/RepositoryView.vue";
+import RepositoriesView from "../views/RepositoriesView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,7 +18,7 @@ const router = createRouter({
         {
             path: "/repositories",
             name: "Repositories",
-            component: RepositoryView,
+            component: RepositoriesView,
             meta: { requiresAuth: true }
         },
         {

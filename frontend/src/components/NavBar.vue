@@ -1,6 +1,5 @@
 <script setup lang="ts">
     import { useGithubAuthStore } from '@/stores/githubAuth';
-import { LucideLogIn } from 'lucide-vue-next';
 import { useRouter } from 'vue-router';
 import LoadingTile from './LoadingTile.vue';
 
