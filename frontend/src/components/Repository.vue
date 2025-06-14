@@ -19,7 +19,9 @@ getLanguageData(repo.language).then((langData) => {
 </script>
 
 <template>
-    <a :href="repo.svn_url" target="_blank" class="flex">
+<!--    <a :href="repo.svn_url" target="_blank" class="flex">-->
+    <router-link :to="{name: 'Repository',  params: {username: repo.owner.login, name: repo.name, branch: repo.default_branch}}"
+                 class="v-tw-merge">
         <Tile class="flex flex-col gap-4 grow">
             <h3 class="text-xl font-bold">
                 {{ repo.name }}
@@ -35,5 +37,6 @@ getLanguageData(repo.language).then((langData) => {
                 {{ repo.language }}
             </div>
         </Tile>
-    </a>
+    </router-link>
+<!--    </a>-->
 </template>

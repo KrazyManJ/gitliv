@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
+import RepositoryView from "@/views/RepositoryView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,12 @@ const router = createRouter({
             path: "/login-success",
             name: "Redirecting",
             component: LoginSuccessView,
+        },
+        {
+            path: "/:username/repo/:name/:branch",
+            name: "Repository",
+            component: RepositoryView,
+            props: true
         }
         // {
         //   path: '/about',

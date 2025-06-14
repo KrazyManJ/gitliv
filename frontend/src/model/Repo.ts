@@ -5,4 +5,8 @@ export default interface Repo {
     language: string;
     updated_at: string;
     svn_url: string;
+    default_branch: string;
+    owner: {
+        login: string
+    }
 }

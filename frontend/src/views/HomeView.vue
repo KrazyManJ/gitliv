@@ -37,8 +37,8 @@ onMounted(() => {
             Login
         </button>
         <User v-if="githubUser.current" :user="githubUser.current" />
-        <div class="grid grid-cols-3 gap-8">
-            <Repository v-for="repo in repos" :key="repo.id" :repo="repo" />
+        <div v-if="useAuthStore.user" class="grid grid-cols-3 gap-8">
+            <Repository v-for="repo in repos" :key="repo.id" :repo="repo"/>
         </div>
         <ThemePicker />
     </main>
