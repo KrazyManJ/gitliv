@@ -3,8 +3,6 @@ import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
 import { ref } from "vue";
 import Tile from "./Tile.vue";
-import {useGithubStore} from "@/stores/github.ts";
-import {useGithubAuthStore} from "@/stores/githubAuth.ts";
 import { api } from "@/api";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import { LucideTrash } from "lucide-vue-next";

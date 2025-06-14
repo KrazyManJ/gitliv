@@ -70,13 +70,5 @@ export const useGithubStore = defineStore("github", () => {
             });
     }
 
-    const fetchCommits = (owner: string, repo: string) => {
-        api.get<Commit[]>(`repos/${owner}/${repo}/commits`)
-            .then(response => {
-                commits.splice(0, commits.length);
-                response.data.forEach(commit => commits.push(commit));
-            });
-    }
-
     return { user: userNotOAuth, repos, commits, files, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo};
 });
