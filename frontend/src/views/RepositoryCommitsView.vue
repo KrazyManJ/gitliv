@@ -86,11 +86,6 @@ watch(commits, async (newVal) => {
         <div
             class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden"
         >
-            <div class="flex items-center justify-between p-6 border-b border-zinc-300 dark:border-zinc-700">
-                <h2 class="text-lg font-semibold">
-                    Commits for <span class="text-blue-600">{{ owner }}/{{ repo }}</span>
-                </h2>
-            </div>
 
             <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
                 <div class="w-[100px] min-w-[100px] pt-6"> <!-- pt-6 = padding-top: 1.5rem = 24px -->
