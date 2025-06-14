@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeViev.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
+import RepositoryCommitsView from "@/views/RepositoryCommitsView.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import CreateRepository from "@/views/CreateRepository.vue";
 import RepositoryView from "../views/RepositoryView.vue";
@@ -24,6 +25,12 @@ const router = createRouter({
             path: "/login-success",
             name: "Redirecting",
             component: LoginSuccessView,
+        },
+        {
+            path: '/repos/:owner/:repo/commits',
+            name: "commits",
+            component: RepositoryCommitsView,
+            meta: { requiresAuth: true },
         },
         {
             path: "/create-repo",
