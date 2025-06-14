@@ -4,11 +4,13 @@ import { reactive } from "vue";
 import type GithubUser from "../model/GithubUser";
 import type Repo from "../model/Repo";
 import { api } from "@/api";
+import type Commit from "@/model/Commit.ts";
 
 export const useGithubStore = defineStore("github", () => {
 
     const user = reactive<{ current: GithubUser | null }>({ current: null });
     const repos = reactive<Repo[]>([]);
+    const commits = reactive<Commit[]>([]);
 
     // axios.get<GithubUser | null>(`${BASE_URL}/users/${username}`).then((response) => {
     //     user.current = response.data;
@@ -28,6 +30,14 @@ export const useGithubStore = defineStore("github", () => {
         });
     }
 
+    const fetchCommits = (owner: string, repo: string) => {
+        api.get<Commit[]>(`repos/${owner}/${repo}/commits`)
+            .then(response => {
+                commits.splice(0, commits.length);
+                response.data.forEach(commit => commits.push(commit));
+            });
+    }
 
-    return { user, repos, fetchRepos };
+
+    return { user, repos, commits, fetchRepos, fetchCommits };
 });

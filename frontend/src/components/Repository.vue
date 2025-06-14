@@ -3,9 +3,14 @@ import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
 import { ref } from "vue";
 import Tile from "./Tile.vue";
+import {useGithubStore} from "@/stores/github.ts";
+import {useGithubAuthStore} from "@/stores/githubAuth.ts";
 const { repo } = defineProps<{
     repo: Repo;
 }>();
+
+const { user } = useGithubAuthStore();
+
 
 const { getLanguageData } = useLinguistStore();
 
@@ -19,7 +24,10 @@ getLanguageData(repo.language).then((langData) => {
 </script>
 
 <template>
-    <a :href="repo.svn_url" target="_blank" class="flex">
+    <router-link
+        :to="`/repos/${user?.username}/${repo.name}/commits`"
+        class="flex"
+    >
         <Tile class="flex flex-col gap-4 grow">
             <h3 class="text-xl font-bold">
                 {{ repo.name }}
@@ -35,5 +43,5 @@ getLanguageData(repo.language).then((langData) => {
                 {{ repo.language }}
             </div>
         </Tile>
-    </a>
+    </router-link>
 </template>
