@@ -1,4 +1,4 @@
 export default class Config {
-    static githubClientId = import.meta.env.GITHUB_CLIENT_ID;
-    static githubClientSecret = import.meta.env.GITHUB_CLIENT_SECRET;
+    static githubApiUrl = import.meta.env.GITHUB_API_URL;
+    static backendOAuthUrl = import.meta.env.BACKEND_OAUTH_URL;
 }
