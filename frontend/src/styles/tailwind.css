@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-    --font-mono: "Jetbrains Mono"
+    --font-mono: "Jetbrains Mono";
+    --color-primary: #7310b0;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
