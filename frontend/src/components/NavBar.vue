@@ -8,7 +8,7 @@
         <div class="flex items-center">
             <div class="flex items-center gap-4">
                 <img src="/icon.svg" width="32" height="32">
-                GitLiv
+                <span class="font-mono font-black text-xl">GitLiv</span>
             </div>
             <div class="grow"></div>
             <div>
