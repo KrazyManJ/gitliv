@@ -3,6 +3,7 @@ export default interface Repo {
     name: string;
     description: string;
     language: string;
-    updated_at: string;
     svn_url: string;
+    pushed_at: string;
+    updated_at: string;
 }

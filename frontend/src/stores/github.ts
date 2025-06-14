@@ -15,15 +15,11 @@ export const useGithubStore = defineStore("github", () => {
     // });
 
     const fetchRepos = () => {
-        api.get<Repo[]>(`user/repos`,{
-            params: {
-                // visibility: "private"
-            }
-        }).then((response) => {
+        api.get<Repo[]>(`user/repos`).then((response) => {
             repos.splice(0, repos.length);
             console.log(response)
             response.data
-                .sort((a, b) => -a.updated_at.localeCompare(b.updated_at))
+                .sort((a, b) => -a.pushed_at.localeCompare(b.pushed_at))
                 .forEach((repo: Repo) => repos.push(repo));
         });
     }
