@@ -6,6 +6,7 @@ export const api = axios.create({
 
 api.interceptors.request.use(
     (config) => {
+        if (!config.params) config.params = {};
         config.params.cb = Date.now();
         return config;
     }
