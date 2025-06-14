@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
+import CreateRepository from "@/views/CreateRepository.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -15,6 +16,12 @@ const router = createRouter({
             path: "/login-success",
             name: "Redirecting",
             component: LoginSuccessView,
+        },
+        {
+            path: "/create-repo",
+            name: "Create a Repository",
+            component: CreateRepository,
+            meta: { requiresAuth: true },
         }
         // {
         //   path: '/about',
@@ -36,7 +43,7 @@ router.beforeEach((to, from, next) => {
     if (requiresAuth && !isAuthenticated()) {
         next("/")
     } else {
-    next();
+        next();
     }
 });
 

@@ -13,7 +13,7 @@ const CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
 app.get("/github/login", (req, res) => {
-    const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user+repo`;
+    const redirectUrl = `https://github.com/login/oauth/authorize?client_id=${CLIENT_ID}&scope=user+repo+delete_repo`;
     res.redirect(redirectUrl);
 });
 
