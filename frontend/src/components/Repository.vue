@@ -46,6 +46,8 @@ const deleteRepo = (repo: string) => {
             :to="`/repos/${user?.username}/${repo.name}/commits`"
             class="flex"
         >
+        <!-- <router-link :to="{name: 'Repository',  params: {username: repo.owner.login, name: repo.name, branch: repo.default_branch}}"
+                 class="v-tw-merge"></router-link> -->
             <h3 class="text-xl font-bold">
                 {{ repo.name }}
             </h3>
