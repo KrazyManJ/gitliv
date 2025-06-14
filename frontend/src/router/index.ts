@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
+import { useGithubAuthStore } from "@/stores/githubAuth";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -28,7 +29,15 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
     if (to.name) document.title = `${to.name.toString()} | GitLiv`;
+
+    const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+    const { isAuthenticated } = useGithubAuthStore();
+
+    if (requiresAuth && !isAuthenticated()) {
+        next("/")
+    } else {
     next();
+    }
 });
 
 export default router;

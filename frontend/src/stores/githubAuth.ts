@@ -12,20 +12,29 @@ export const useGithubAuthStore = defineStore("githubAuth", () => {
     const user = ref<GithubOAuthUser | null>()
 
     const redirectToGithubOAuth = () => {
-window.location.href = `http://localhost:3001/github/login`
+        window.location.href = `http://localhost:3001/github/login`
     }
 
     const loadUserFromCookies = async () => {
         const token = Cookies.get(TOKEN_COOKIE_NAME)
-        if (!token) return;
+        if (!token) return true;
         setBearerAuthToken(token)
 
-        const {data} = await api.get<GithubUser>('/user');
-        user.value = {
-            avatar: data.avatar_url,
-            token: token,
-            username: data.login
+        try {
+            const {data} = await api.get<GithubUser>('/user').catch();
+            user.value = {
+                avatar: data.avatar_url,
+                token: token,
+                username: data.login
+            }
+        } catch {
+            return false
         }
+        return true
+    }
+
+    const isAuthenticated = (): boolean => {
+        return Cookies.get(TOKEN_COOKIE_NAME) != undefined
     }
 
     const processAuthData = (userData: GithubOAuthUser) => {
@@ -45,6 +54,7 @@ window.location.href = `http://localhost:3001/github/login`
         user,
         processAuthData,
         logout,
-        loadUserFromCookies
+        loadUserFromCookies,
+        isAuthenticated
     };
 });

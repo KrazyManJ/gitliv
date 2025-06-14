@@ -1,9 +1,16 @@
 import axios from "axios";
 
 export const api = axios.create({
-  baseURL: "https://api.github.com",
+    baseURL: "https://api.github.com",
 });
 
+api.interceptors.request.use(
+    (config) => {
+        config.params.cb = Date.now();
+        return config;
+    }
+);
+
 export const setBearerAuthToken = (token: string | null) => {
-  api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
