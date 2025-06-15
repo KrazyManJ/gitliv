@@ -62,13 +62,47 @@ export const useGithubStore = defineStore("github", () => {
         });
     }
 
-    const fetchCommits = (owner: string, repo: string) => {
-        api.get<Commit[]>(`repos/${owner}/${repo}/commits`)
-            .then(response => {
-                commits.splice(0, commits.length);
-                response.data.forEach(commit => commits.push(commit));
-            });
-    }
+    const fetchCommits = async (owner: string, repo: string) => {
+        const { data: branches } = await api.get<{ name: string }[]>(`repos/${owner}/${repo}/branches`);
+
+        const allCommits: Commit[] = [];
+
+        for (const branch of branches) {
+            const { data: branchCommits } = await api.get<Commit[]>(
+                `repos/${owner}/${repo}/commits?sha=${branch.name}&per_page=100`
+            );
+
+            for (const commit of branchCommits) {
+                if (!commit.branch) commit.branch = [];
+                commit.branch.push(branch.name);
+            }
+
+            allCommits.push(...branchCommits);
+        }
+
+        // Deduplicate and merge branch arrays; assign firstSeenOn for the branch first encountered on
+        const commitMap = new Map<string, Commit>();
+
+        for (const commit of allCommits) {
+            if (commitMap.has(commit.sha)) {
+                const existing = commitMap.get(commit.sha)!;
+                existing.branch = [...new Set([...(existing.branch ?? []), ...(commit.branch ?? [])])];
+            } else {
+                // Mark the branch where this commit was first seen
+                if (commit.branch && commit.branch.length > 0) {
+                    (commit as Commit & { firstSeenOn?: string }).firstSeenOn = commit.branch[0];
+                }
+                commitMap.set(commit.sha, commit);
+            }
+        }
+
+        const uniqueCommits = Array.from(commitMap.values());
+
+        commits.splice(0, commits.length, ...uniqueCommits);
+    };
+
+
+
 
     return { user: userNotOAuth, repos, commits, files, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo};
 });

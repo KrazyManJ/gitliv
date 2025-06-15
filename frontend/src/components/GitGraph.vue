@@ -7,14 +7,24 @@
 <script lang="ts">
 import { defineComponent, onMounted, ref, watch } from "vue";
 import type { PropType } from "vue";
-import { createGitgraph, templateExtend, TemplateName } from "@gitgraph/js";
+import {
+    createGitgraph,
+    templateExtend,
+    TemplateName,
+    type Branch,
+} from "@gitgraph/js";
+import type Commit from "@/model/Commit.ts";
 
 export default defineComponent({
     name: "GitGraph",
     props: {
         commitSpacing: {
             type: Number as PropType<number>,
-            default: 115, // fallback if not provided
+            default: 115,
+        },
+        commits: {
+            type: Array as PropType<Commit[]>,
+            default: () => [],
         },
     },
     setup(props) {
@@ -22,8 +32,6 @@ export default defineComponent({
 
         const drawGraph = () => {
             if (!gitGraphContainer.value) return;
-
-            // Clear previous graph (important when redrawing)
             gitGraphContainer.value.innerHTML = "";
 
             const gitgraph = createGitgraph(gitGraphContainer.value, {
@@ -42,19 +50,76 @@ export default defineComponent({
                 }),
             });
 
-            // Sample graph structure
-            const master = gitgraph.branch("master");
-            master.commit("Initial commit");
+            const branches = new Map<string, Branch>();
+            const commitMap = new Map<string, { branch: Branch; sha: string }>();
+            const mainBranch = gitgraph.branch("main");
+            branches.set("main", mainBranch);
 
-            const feature = gitgraph.branch("feature/login");
-            feature.commit().commit(); // no messages
+            // Topological sort
+            const commitsBySha = new Map(props.commits.map((c) => [c.sha, c]));
+            const visited = new Set<string>();
+            const sortedCommits: Commit[] = [];
 
-            master.merge(feature);
-            master.commit();
+            function visit(commit: Commit) {
+                if (visited.has(commit.sha)) return;
+                visited.add(commit.sha);
+                for (const parent of commit.parents ?? []) {
+                    const parentCommit = commitsBySha.get(parent.sha);
+                    if (parentCommit) visit(parentCommit);
+                }
+                sortedCommits.push(commit);
+            }
+
+            for (const commit of props.commits) visit(commit);
+
+            // Draw commits
+            for (const commit of sortedCommits) {
+                const sha = commit.sha;
+                const parents = commit.parents ?? [];
+
+                const firstParentSha = parents[0]?.sha;
+                const branchName =
+                    (commit as Commit & { firstSeenOn?: string }).firstSeenOn ??
+                    commit.branch?.[0] ??
+                    "main";
+
+                let branch: Branch;
+
+                if (branches.has(branchName)) {
+                    branch = branches.get(branchName)!;
+                } else {
+                    // Base new branch off first parent if available
+                    let fromBranch = mainBranch;
+                    if (firstParentSha && commitMap.has(firstParentSha)) {
+                        fromBranch = commitMap.get(firstParentSha)!.branch;
+                    }
+                    branch = fromBranch.branch(branchName);
+                    branches.set(branchName, branch);
+                }
+
+                // Add commit to branch
+                branch.commit({
+                    subject: commit.commit.message,
+                    hash: sha.slice(0, 7),
+                });
+
+                // Handle merges from second+ parents
+                for (let i = 1; i < parents.length; i++) {
+                    const mergeFromSha = parents[i].sha;
+                    const mergeFromBranch = commitMap.get(mergeFromSha)?.branch;
+                    if (mergeFromBranch && mergeFromBranch !== branch) {
+                        branch.merge(mergeFromBranch);
+                    }
+                }
+
+                // Track the commit
+                commitMap.set(sha, { branch, sha });
+            }
         };
 
         onMounted(drawGraph);
         watch(() => props.commitSpacing, drawGraph);
+        watch(() => props.commits, drawGraph, { deep: true });
 
         return { gitGraphContainer };
     },

@@ -12,6 +12,7 @@ export default interface Commit {
         login: string;
         avatar_url: string;
     } | null;
-
-    branch?: string;
+    branch?: string[];              // All branches this commit appears on
+    firstSeenOn?: string;           // Branch we first encountered this commit from
+    parents: { sha: string }[];
 }
