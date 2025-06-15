@@ -6,6 +6,7 @@ import { useGithubAuthStore } from "@/stores/githubAuth";
 import CreateRepository from "@/views/CreateRepository.vue";
 import RepositoriesView from "../views/RepositoriesView.vue";
 import RepositoryView from "@/views/RepositoryView.vue";
+import RepositoryPullRequestsView from "@/views/RepositoryPullRequestsView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,6 +45,13 @@ const router = createRouter({
             name: "Create a Repository",
             component: CreateRepository,
             meta: { requiresAuth: true },
+        },
+        {
+            path: '/repos/:owner/:repo/pull-requests',
+            name: "pull-requests",
+            component: RepositoryPullRequestsView,
+            meta: { requiresAuth: true },
+            props: true,
         }
     ],
 });

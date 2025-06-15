@@ -7,6 +7,7 @@ import type Branch from "@/model/Branch.ts";
 import type GitFile from "@/model/GitFile.ts";
 import type GitTree from "@/model/GitTree.ts";
 import type Commit from "@/model/Commit.ts";
+import type PullRequest from "@/model/PullRequest.ts";
 
 export const useGithubStore = defineStore("github", () => {
 
@@ -15,6 +16,9 @@ export const useGithubStore = defineStore("github", () => {
     // const branch = reactive<{current: Branch | null}>({current: null})
     const files = reactive<GitFile[]>([])
     const commits = reactive<Commit[]>([]);
+    const pullRequests = reactive<PullRequest[]>([]);
+    const branches = reactive<Branch[]>([]);
+
 
     // const fetchBranchFromRepo = async (username: string, name: string) => {
     //     await api.get<Branch>(`/repos/${username}/${name}/branches/main`).then((response) => {
@@ -102,7 +106,59 @@ export const useGithubStore = defineStore("github", () => {
     };
 
 
+    const fetchPullRequests = (owner: string, repo: string) => {
+        api.get<PullRequest[]>(`repos/${owner}/${repo}/pulls`)
+            .then(response => {
+                pullRequests.splice(0, pullRequests.length);
+                response.data.forEach(pr => pullRequests.push(pr));
+            })
+            .catch(error => {
+                console.error('Failed to fetch pull requests:', error);
+            });
+    };
 
 
-    return { user: userNotOAuth, repos, commits, files, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo};
+    const fetchBranches = (owner: string, repo: string) => {
+        api.get<Branch[]>(`/repos/${owner}/${repo}/branches`)
+            .then(response => {
+                branches.splice(0, branches.length);
+                response.data.forEach(branch => branches.push(branch));
+            })
+            .catch(error => {
+                console.error("Failed to fetch branches:", error);
+            });
+    };
+
+
+
+    const createPullRequest = async (
+        owner: string,
+        repo: string,
+        title: string,
+        head: string, // source branch
+        base: string, // target branch
+        body?: string
+    ) => {
+        try {
+            const response = await api.post<PullRequest>(`/repos/${owner}/${repo}/pulls`, {
+                title,
+                head,
+                base,
+                body
+            });
+
+            // Add the new PR to your list or re-fetch:
+            pullRequests.unshift(response.data);
+            return response.data;
+
+        } catch (error) {
+            console.error("Failed to create pull request:", error);
+            throw error;
+        }
+    };
+
+
+
+
+    return { user: userNotOAuth, repos, commits, files, pullRequests, branches, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchPullRequests, createPullRequest, fetchBranches};
 });

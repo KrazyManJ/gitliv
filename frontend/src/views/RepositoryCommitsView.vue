@@ -19,7 +19,6 @@ const commitHeight = ref(115);
 
 const selectedBranch = ref("All branches");
 
-// ✅ FIX: Use commits directly, NOT commits.value
 const branches = computed(() => {
     const branchSet = new Set<string>();
     for (const commit of commits) {
@@ -30,7 +29,6 @@ const branches = computed(() => {
     return Array.from(branchSet).sort();
 });
 
-// ✅ FIX: Use commits directly, NOT commits.value
 const filteredCommits = computed(() => {
     if (selectedBranch.value === "All branches") {
         return commits;
@@ -85,9 +83,12 @@ watch(filteredCommits, async (newVal) => {
                 <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
                     Source
                 </button>
-                <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
+                <router-link
+                    :to="`/repos/${owner}/${repo}/pull-requests`"
+                    class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded hover:bg-zinc-400 dark:hover:bg-zinc-600 inline-block text-center"
+                >
                     PullRequest
-                </button>
+                </router-link>
             </div>
             <button class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">Clone</button>
         </div>
