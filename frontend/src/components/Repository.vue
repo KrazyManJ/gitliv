@@ -30,8 +30,8 @@ getLanguageData(repo.language).then((langData) => {
     }
 });
 
-const deleteRepo = (repo: string) => {
-    api.delete(`/repos/${githubAuth.user?.username}/${repo}`)
+const deleteRepo = async (repo: string) => {
+    await api.delete(`/repos/${githubAuth.user?.username}/${repo}`)
     emit("on-delete")
 }
 
@@ -60,7 +60,7 @@ const deleteRepo = (repo: string) => {
             <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
             <span>{{ repo.language }}</span>
         </div>
-        <button @click="() => deleteRepo(repo.name)">
+        <button @click="() => deleteRepo(repo.name)" class="cursor-pointer">
             <LucideTrash/>
         </button>
     </Tile>

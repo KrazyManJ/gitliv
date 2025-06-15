@@ -2,9 +2,11 @@
 import { ref, useAttrs } from 'vue';
 
 
+export type Rule = (v: unknown) => true | string
+
 const { label, rules } = defineProps<{
     label: string,
-    rules?: [(v: unknown) => boolean | string]
+    rules?: Rule[]
 }>()
 
 const model = defineModel()
