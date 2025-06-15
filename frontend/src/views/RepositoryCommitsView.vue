@@ -8,6 +8,7 @@ import GitGraph from "@/components/GitGraph.vue";
 const route = useRoute();
 const owner = route.params.owner as string;
 const repo = route.params.repo as string;
+const branch = route.params.branch as string;
 
 const { commits, fetchCommits } = useGithubStore();
 
@@ -16,6 +17,7 @@ const error = ref<string | null>(null);
 
 const commitListRef = ref<HTMLElement | null>(null);
 const commitHeight = ref(115);
+
 
 async function measureCommitHeight() {
     await nextTick();
@@ -61,7 +63,8 @@ watch(commits, async (newVal) => {
         <div class="flex justify-between items-center mb-6">
             <div class="flex gap-4">
                 <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
-                    Source
+                    <router-link :to="{name: 'Repository',  params: {username: owner, name: repo, branch: branch}}"
+                                 class="v-tw-merge">Source</router-link>
                 </button>
                 <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
                     PullRequest

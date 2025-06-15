@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {reactive} from "vue";
+import {reactive, ref} from "vue";
 import type GithubUser from "../model/GithubUser";
 import type Repo from "../model/Repo";
 import { api } from "@/api";
@@ -12,9 +12,14 @@ export const useGithubStore = defineStore("github", () => {
 
     const userNotOAuth = reactive<{ current: GithubUser | null }>({ current: null });
     const repos = reactive<Repo[]>([]);
+    const branches = reactive<Branch[]>([]);
     // const branch = reactive<{current: Branch | null}>({current: null})
+    const treeHistory = ref<string[]>([])
+    const isLoading = ref(true)
     const files = reactive<GitFile[]>([])
     const commits = reactive<Commit[]>([]);
+
+
 
     // const fetchBranchFromRepo = async (username: string, name: string) => {
     //     await api.get<Branch>(`/repos/${username}/${name}/branches/main`).then((response) => {
@@ -22,36 +27,46 @@ export const useGithubStore = defineStore("github", () => {
     //     });
     // }
 
-
-
-    const fetchFilesFromRepoFirst = (username: string, name: string, branch: string) => {
-        api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`)
-            .then(({ data }) => {
-                console.log(data.commit.commit.tree.url)
-                return api.get<GitTree>(data.commit.commit.tree.url)
-            })
-            .then((response) => {
-                files.splice(0, files.length)
-                console.log(files)
-                response.data.tree.forEach((file: GitFile) => files.push(file))
-            })
-
-        // api.get<GitTree>(`/repos/${username}/${name}/git/trees/${branch.current?.commit.commit.tree.url}`)
-        //     .then((response) => {
-        //     files.slice(0, files.length)
-        //         console.log(files)
-        //     response.data.tree.forEach((file: GitFile) => files.push(file))
-        // });
+    const fetchBranchesFromRepo = async (username: string, name: string) => {
+        isLoading.value = true
+        try {
+            await api.get<Branch[]>(`/repos/${username}/${name}/branches`).then((response) => {
+                branches.splice(0,branches.length)
+                response.data.forEach((branch: Branch) => branches.push(branch))
+            });
+        }finally {
+            isLoading.value = false
+        }
     }
 
-    const fetchFilesFromRepo = (username: string, name: string, treePath: string) => {
-        api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`)
-            .then((response) => {
-            files.splice(0, files.length)
-                console.log(files)
+    const fetchFilesFromRepoFirst = async (username: string, name: string, branch: string) => {
+        files.splice(0, files.length);
+        isLoading.value = true;
+
+        try {
+            const { data } = await api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`);
+            const response = await api.get<GitTree>(data.commit.commit.tree.url);
+            treeHistory.value.splice(0, treeHistory.value.length)
+            treeHistory.value.push(response.data.sha)
+            response.data.tree.forEach((file: GitFile) => files.push(file));
+        } finally {
+            isLoading.value = false;
+        }
+    };
+
+
+    const fetchFilesFromRepo = async (username: string, name: string, treePath: string) => {
+        files.splice(0, files.length)
+        isLoading.value = true;
+        try {
+           const response = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`)
             response.data.tree.forEach((file: GitFile) => files.push(file))
-        });
+        } finally {
+            isLoading.value = false
+        }
     }
+
+
 
     const fetchRepos = () => {
         api.get<Repo[]>(`user/repos`).then((response) => {
@@ -65,10 +80,12 @@ export const useGithubStore = defineStore("github", () => {
     const fetchCommits = (owner: string, repo: string) => {
         api.get<Commit[]>(`repos/${owner}/${repo}/commits`)
             .then(response => {
+                console.log(response.data)
                 commits.splice(0, commits.length);
                 response.data.forEach(commit => commits.push(commit));
             });
     }
 
-    return { user: userNotOAuth, repos, commits, files, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo};
+    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, fetchRepos, fetchCommits,
+        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo};
 });
