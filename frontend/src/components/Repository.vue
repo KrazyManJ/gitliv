@@ -5,7 +5,7 @@ import { ref } from "vue";
 import Tile from "./Tile.vue";
 import { api } from "@/api";
 import { useGithubAuthStore } from "@/stores/githubAuth";
-import { LucideTrash } from "lucide-vue-next";
+import { LucidePencil, LucideTrash } from "lucide-vue-next";
 
 const { repo } = defineProps<{
     repo: Repo;
@@ -63,5 +63,11 @@ const deleteRepo = async (repo: string) => {
         <button @click="() => deleteRepo(repo.name)" class="cursor-pointer">
             <LucideTrash/>
         </button>
+        <router-link
+            :to='{name: "Edit a Repository",params: {repo: repo.name}}'
+        >
+
+            <LucidePencil/>
+        </router-link>
     </Tile>
 </template>

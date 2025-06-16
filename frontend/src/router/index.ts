@@ -44,6 +44,12 @@ const router = createRouter({
             name: "Create a Repository",
             component: CreateEditRepositoryView,
             meta: { requiresAuth: true },
+        },
+        {
+            path: "/repos/:repo/edit",
+            name: "Edit a Repository",
+            component: CreateEditRepositoryView,
+            meta: { requiresAuth: true },
         }
     ],
 });
