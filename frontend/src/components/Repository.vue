@@ -9,7 +9,6 @@ import { LucidePencil, LucideTrash } from "lucide-vue-next";
 
 const { repo } = defineProps<{
     repo: Repo;
-    onDelete?: () => void
 }>();
 
 const { user } = useGithubAuthStore();
@@ -56,18 +55,22 @@ const deleteRepo = async (repo: string) => {
             </p>
             <p v-else class="italic">No description provided</p>
         </div>
-        <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
-            <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
-            <span>{{ repo.language }}</span>
+        <div class="flex">
+            <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
+                <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
+                <span>{{ repo.language }}</span>
+            </div>
+            <div class="grow" />
+            <div class="flex gap-4">
+                <button @click="() => deleteRepo(repo.name)" class="cursor-pointer">
+                    <LucideTrash/>
+                </button>
+                <router-link
+                    :to='{name: "Edit a Repository",params: {repo: repo.name}}'
+                >
+                    <LucidePencil/>
+                </router-link>
+            </div>
         </div>
-        <button @click="() => deleteRepo(repo.name)" class="cursor-pointer">
-            <LucideTrash/>
-        </button>
-        <router-link
-            :to='{name: "Edit a Repository",params: {repo: repo.name}}'
-        >
-
-            <LucidePencil/>
-        </router-link>
     </Tile>
 </template>
