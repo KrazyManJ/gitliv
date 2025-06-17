@@ -3,7 +3,6 @@ import HomeView from "../views/HomeViev.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
 import RepositoryCommitsView from "@/views/RepositoryCommitsView.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
-import CreateEditRepositoryView from "@/views/CreateEditRepositoryView.vue";
 import RepositoriesView from "../views/RepositoriesView.vue";
 import RepositoryView from "@/views/RepositoryView.vue";
 import RepositoryPullRequestsView from "@/views/RepositoryPullRequestsView.vue";
@@ -39,18 +38,6 @@ const router = createRouter({
             path: "/repos/:owner/:repo/commits/:branch",
             name: "Commits",
             component: RepositoryCommitsView,
-            meta: { requiresAuth: true },
-        },
-        {
-            path: "/create-repo",
-            name: "Create a Repository",
-            component: CreateEditRepositoryView,
-            meta: { requiresAuth: true },
-        },
-        {
-            path: "/repos/:repo/edit",
-            name: "Edit a Repository",
-            component: CreateEditRepositoryView,
             meta: { requiresAuth: true },
         },
         {
