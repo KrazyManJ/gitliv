@@ -3,7 +3,8 @@ import {onMounted, ref} from "vue";
 import {storeToRefs} from "pinia";
 import {useGithubStore} from "@/stores/github.ts";
 import File from "@/components/File.vue";
-import { LucideCornerLeftUp } from "lucide-vue-next";
+import {LucideArrowLeft, LucideCornerLeftUp} from "lucide-vue-next";
+import { useRoute } from "vue-router";
 
     // const {fetchFilesFromRepoFirst, fetchFilesFromRepo} = useGithubStore()
 
@@ -11,39 +12,48 @@ const store = useGithubStore()
 const {fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo} = store
 const { treeHistory, isLoading, files, branches } = storeToRefs(store)
 
+const route = useRoute()
+
+
+const username = route.params.username as string;
+const name = route.params.name as string;
+const branch = route.params.branch as string;
 
 const selectedBranch = ref("")
 
-const props = defineProps<{
-        username: string,
-        name: string,
-        branch: string
-    }>()
+// const props = defineProps<{
+//         username: string,
+//         name: string,
+//         branch: string
+// }>()
 
     const goUp = () => {
         treeHistory.value.pop()
         // console.log(treeHistory.value.length)
         const parentPath = treeHistory.value[treeHistory.value.length-1]
-        fetchFilesFromRepo(props.username, props.name, parentPath)
+        fetchFilesFromRepo(username, name, parentPath)
     }
 
     const changeBranch = () => {
         files.value.splice(0, files.value.length)
-        fetchFilesFromRepoFirst(props.username,props.name,selectedBranch.value)
+        fetchFilesFromRepoFirst(username, name,selectedBranch.value)
     }
 
     onMounted(() => {
-        selectedBranch.value = props.branch
+        selectedBranch.value = branch
         treeHistory.value.splice(0,treeHistory.value.length)
         files.value.splice(0, files.value.length)
-        fetchFilesFromRepoFirst(props.username,props.name,props.branch)
-        fetchBranchesFromRepo(props.username, props.name)
+        fetchFilesFromRepoFirst(username,name, selectedBranch.value)
+        fetchBranchesFromRepo(username, name)
     })
 </script>
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
         <div class="flex-col items-center justify-between mb-4">
+          <router-link :to="{ name: 'Commits', params: { owner:username, repo:name, branch:branch } }">
+            <LucideArrowLeft />
+          </router-link>
             <div class="flex items-center">
                 <h1 class="pl-2 mb-1 text-4xl font-bold text-zinc-900 dark:text-zinc-100">
                     Source
@@ -74,7 +84,9 @@ const props = defineProps<{
             <div class="p-4 border-2 border-solid border-black rounded-lg" v-else>
                 <button v-if="treeHistory.length > 1" @click="goUp()"><LucideCornerLeftUp/></button>
                 <div v-for="file in files">
-                    <File :file="file" :username="props.username" :name="props.name"/>
+                    <File :file="file" :username="username" :name="name"
+                          :branch="selectedBranch || 'main'"/>
+<!--                  <span>{{file.sha}}</span>-->
                 </div>
             </div>
         </div>

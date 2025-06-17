@@ -7,6 +7,7 @@ import CreateEditRepositoryView from "@/views/CreateEditRepositoryView.vue";
 import RepositoriesView from "../views/RepositoriesView.vue";
 import RepositoryView from "@/views/RepositoryView.vue";
 import RepositoryPullRequestsView from "@/views/RepositoryPullRequestsView.vue";
+import FileView from "@/views/FileView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,11 +30,17 @@ const router = createRouter({
             component: LoginSuccessView,
         },
         {
-            path: "/:username/repo/:name/:branch",
+            path: "/:username/repo/:name/:branch/:file/:sha",
+            name: "File",
+            component: FileView,
+            meta: { requiresAuth: true },
+            props: true
+        },
+        {
+            path: "/:username/repo-view/:name/:branch?",
             name: "Repository",
             component: RepositoryView,
             meta: { requiresAuth: true },
-            props: true
         },
         {
             path: "/repos/:owner/:repo/commits/:branch",

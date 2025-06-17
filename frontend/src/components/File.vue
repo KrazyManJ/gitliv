@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import type GitFile from "@/model/GitFile.ts";
+import type GitFileFromTree from "@/model/GitFileFromTree.ts";
 import {useGithubStore} from "@/stores/github.ts";
 import {storeToRefs} from "pinia";
 import { LucideFolder, LucideFile } from "lucide-vue-next";
@@ -10,9 +10,10 @@ const {fetchFilesFromRepo} = store
 const {treeHistory} = storeToRefs(store)
 
 const props = defineProps<{
-    file: GitFile,
+    file: GitFileFromTree,
     username: string,
-    name: string
+    name: string,
+    branch: string
 }>();
 
 const changeDisplayedFiles = (treePath: string | undefined) => {
@@ -34,10 +35,14 @@ const changeDisplayedFiles = (treePath: string | undefined) => {
         <span class="pl-2">{{ file.path }}</span>
     </button>
 
-    <div class="flex items-center rounded-lg border-2 border-solid border-black w-full p-4 mb-1" v-else>
+    <router-link :to="{name:'File', params:{file:file.path, name:name, username:username, branch:branch,
+    sha:file.sha}}"
+                 class="flex items-center rounded-lg
+                 border-2 border-solid
+                 border-black w-full p-4 mb-1" v-else>
         <LucideFile />
-        <div class="pl-2">{{ file.path }}</div>
-    </div>
+        <span class="pl-2">{{ file.path }}</span>
+    </router-link>
 
 </template>
 

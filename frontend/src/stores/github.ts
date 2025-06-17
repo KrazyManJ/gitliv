@@ -4,10 +4,11 @@ import type GithubUser from "../model/GithubUser";
 import type Repo from "../model/Repo";
 import { api } from "@/api";
 import type Branch from "@/model/Branch.ts";
-import type GitFile from "@/model/GitFile.ts";
+import type GitFileFromTree from "@/model/GitFileFromTree.ts";
 import type GitTree from "@/model/GitTree.ts";
 import type Commit from "@/model/Commit.ts";
 import type PullRequest from "@/model/PullRequest.ts";
+import type GitFileSingle from "@/model/GitFileSingle.ts";
 
 export const useGithubStore = defineStore("github", () => {
 
@@ -17,9 +18,10 @@ export const useGithubStore = defineStore("github", () => {
     // const branch = reactive<{current: Branch | null}>({current: null})
     const treeHistory = ref<string[]>([])
     const isLoading = ref(true)
-    const files = reactive<GitFile[]>([])
+    const files = reactive<GitFileFromTree[]>([])
     const commits = reactive<Commit[]>([]);
     const pullRequests = reactive<PullRequest[]>([]);
+    const fileData = reactive<{current: GitFileSingle | null}>({current: null})
 
 
     // const fetchBranchFromRepo = async (username: string, name: string) => {
@@ -27,6 +29,18 @@ export const useGithubStore = defineStore("github", () => {
     //         branch.current = response.data
     //     });
     // }
+
+    const fetchFile = async (file: string, username: string, name: string) => {
+        fileData.current = null
+        isLoading.value = true
+        try {
+            await api.get<GitFileSingle>(`/repos/${username}/${name}/git/blobs/${file}`).then((response) => {
+                fileData.current = response.data
+            });
+        }finally {
+            isLoading.value = false
+        }
+    }
 
     const fetchBranchesFromRepo = async (username: string, name: string) => {
         isLoading.value = true
@@ -49,7 +63,8 @@ export const useGithubStore = defineStore("github", () => {
             const response = await api.get<GitTree>(data.commit.commit.tree.url);
             treeHistory.value.splice(0, treeHistory.value.length)
             treeHistory.value.push(response.data.sha)
-            response.data.tree.forEach((file: GitFile) => files.push(file));
+            response.data.tree.forEach((file: GitFileFromTree) => files.push(file));
+            console.log(response.data)
         } finally {
             isLoading.value = false;
         }
@@ -61,7 +76,9 @@ export const useGithubStore = defineStore("github", () => {
         isLoading.value = true;
         try {
            const response = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`)
-            response.data.tree.forEach((file: GitFile) => files.push(file))
+            console.log(response.data)
+            response.data.tree.forEach((file: GitFileFromTree) => files.push(file))
+
         } finally {
             isLoading.value = false
         }
@@ -72,6 +89,7 @@ export const useGithubStore = defineStore("github", () => {
     const fetchRepos = () => {
         api.get<Repo[]>(`user/repos`).then((response) => {
             repos.splice(0, repos.length);
+            console.log(response.data)
             response.data
                 .sort((a, b) => -a.pushed_at.localeCompare(b.pushed_at))
                 .forEach((repo: Repo) => repos.push(repo));
@@ -172,6 +190,6 @@ export const useGithubStore = defineStore("github", () => {
 
 
 
-    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests, fetchRepos, fetchCommits,
-        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches};
+    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests, fileData,
+        fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchFile};
 });
