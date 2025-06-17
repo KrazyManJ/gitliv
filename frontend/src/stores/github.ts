@@ -169,9 +169,20 @@ export const useGithubStore = defineStore("github", () => {
         }
     };
 
+    const fetchCommitDetails = async (owner: string, repo: string, sha: string) => {
+        try {
+            const { data } = await api.get(`repos/${owner}/${repo}/commits/${sha}`);
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch commit details:", error);
+            throw error;
+        }
+    };
+
+
 
 
 
     return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests, fetchRepos, fetchCommits,
-        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches};
+        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchCommitDetails};
 });

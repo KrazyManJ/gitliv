@@ -7,6 +7,7 @@ import CreateEditRepositoryView from "@/views/CreateEditRepositoryView.vue";
 import RepositoriesView from "../views/RepositoriesView.vue";
 import RepositoryView from "@/views/RepositoryView.vue";
 import RepositoryPullRequestsView from "@/views/RepositoryPullRequestsView.vue";
+import CommitDetailView from "@/views/CommitDetailView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,11 +56,18 @@ const router = createRouter({
         },
         {
             path: '/repos/:owner/:repo/pull-requests',
-            name: "pull-requests",
+            name: "Pull Requests",
             component: RepositoryPullRequestsView,
             meta: { requiresAuth: true },
             props: true,
+        },{
+            path: "/repos/:owner/:repo/commit/:sha",
+            name: "Commit Details",
+            component: CommitDetailView,
+            meta: { requiresAuth: true },
+            props: true,
         }
+
     ],
 });
 
