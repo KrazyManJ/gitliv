@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, onMounted, ref, watch, onBeforeUnmount } from "vue";
+import { nextTick, onMounted, ref, watch, onBeforeUnmount, computed } from "vue";
 import { useRoute } from "vue-router";
 import { useGithubStore } from "@/stores/github";
 import Commit from "@/components/Commits.vue";
@@ -18,6 +18,24 @@ const error = ref<string | null>(null);
 const commitListRef = ref<HTMLElement | null>(null);
 const commitHeight = ref(115);
 
+const selectedBranch = ref("All branches");
+
+const branches = computed(() => {
+    const branchSet = new Set<string>();
+    for (const commit of commits) {
+        if (commit.branch && commit.branch.length) {
+            commit.branch.forEach(b => branchSet.add(b));
+        }
+    }
+    return Array.from(branchSet).sort();
+});
+
+const filteredCommits = computed(() => {
+    if (selectedBranch.value === "All branches") {
+        return commits;
+    }
+    return commits.filter(c => c.branch?.includes(selectedBranch.value));
+});
 
 async function measureCommitHeight() {
     await nextTick();
@@ -33,11 +51,12 @@ async function measureCommitHeight() {
 onMounted(async () => {
     try {
         await fetchCommits(owner, repo);
+        console.log("Fetched commits:", commits);
     } catch (err) {
         error.value = (err as Error).message;
     } finally {
         isLoading.value = false;
-        await measureCommitHeight(); // initial measurement after loading
+        await measureCommitHeight();
     }
 
     window.addEventListener("resize", measureCommitHeight);
@@ -47,13 +66,13 @@ onBeforeUnmount(() => {
     window.removeEventListener("resize", measureCommitHeight);
 });
 
-// Re-measure when commits change
-watch(commits, async (newVal) => {
+watch(filteredCommits, async (newVal) => {
     if (newVal.length) {
         await measureCommitHeight();
     }
 });
 </script>
+
 
 
 
@@ -66,9 +85,12 @@ watch(commits, async (newVal) => {
                     <router-link :to="{name: 'Repository',  params: {username: owner, name: repo, branch: branch}}"
                                  class="v-tw-merge">Source</router-link>
                 </button>
-                <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
+                <router-link
+                    :to="`/repos/${owner}/${repo}/pull-requests`"
+                    class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded hover:bg-zinc-400 dark:hover:bg-zinc-600 inline-block text-center"
+                >
                     PullRequest
-                </button>
+                </router-link>
             </div>
             <button class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">Clone</button>
         </div>
@@ -79,10 +101,15 @@ watch(commits, async (newVal) => {
                 Commits <span class="text-blue-600 text-2xl ml-2">{{ owner }}/{{ repo }}</span>
             </h1>
             <select
+                v-model="selectedBranch"
                 class="border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 px-4 py-2 rounded"
             >
-                <option>Branch</option>
+                <option value="All branches">All branches</option>
+                <option v-for="branch in branches" :key="branch" :value="branch">
+                    {{ branch }}
+                </option>
             </select>
+
         </div>
 
         <!-- Commit Box -->
@@ -92,14 +119,14 @@ watch(commits, async (newVal) => {
 
             <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
                 <div class="w-[100px] min-w-[100px] pt-6"> <!-- pt-6 = padding-top: 1.5rem = 24px -->
-                    <GitGraph :commitSpacing="commitHeight" />
+                    <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
                 </div>
 
                 <div class="flex-1 min-w-0">
                     <div v-if="isLoading">Loading commits...</div>
                     <div v-else-if="error" class="text-red-600 dark:text-red-400">{{ error }}</div>
                     <ul v-else ref="commitListRef" class="space-y-6">
-                        <li v-for="commit in commits" :key="commit.sha" class="commit-item">
+                        <li v-for="commit in filteredCommits" :key="commit.sha" class="commit-item">
                             <Commit :commit="commit" />
                         </li>
                     </ul>
