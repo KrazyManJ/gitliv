@@ -5,7 +5,7 @@ import { ref, useAttrs } from 'vue';
 export type Rule = (v: unknown) => true | string
 
 const { label, rules } = defineProps<{
-    label: string,
+    label?: string,
     rules?: Rule[]
 }>()
 
@@ -37,6 +37,7 @@ const changeErrorState = async () => {
         ]'
     >
         <span
+            v-if="label"
             :class='[
                 "",
                 {
@@ -60,6 +61,7 @@ const changeErrorState = async () => {
             ]'
             v-bind="$attrs"
             v-tw-merge
+            ref="input"
             @focusout="changeErrorState"
             @input="changeErrorState"
         >
