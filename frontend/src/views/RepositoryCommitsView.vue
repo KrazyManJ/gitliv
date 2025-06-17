@@ -4,6 +4,7 @@ import { useRoute } from "vue-router";
 import { useGithubStore } from "@/stores/github";
 import Commit from "@/components/Commits.vue";
 import GitGraph from "@/components/GitGraph.vue";
+import {LucideArrowLeft} from "lucide-vue-next";
 
 const route = useRoute();
 const owner = route.params.owner as string;
@@ -79,9 +80,14 @@ watch(filteredCommits, async (newVal) => {
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
         <!-- Top Controls -->
+        <div class="mb-2">
+            <router-link :to="{ name: 'Repositories'}">
+                <LucideArrowLeft />
+            </router-link>
+        </div>
         <div class="flex justify-between items-center mb-6">
             <div class="flex gap-4">
-                <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded" disabled>
+                <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded">
                     <router-link :to="{name: 'Repository',  params: {username: owner, name: repo, branch: branch}}"
                                  class="v-tw-merge">Source</router-link>
                 </button>
@@ -92,7 +98,7 @@ watch(filteredCommits, async (newVal) => {
                     PullRequest
                 </router-link>
             </div>
-            <button class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">Clone</button>
+            <button class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">CloneModalPlace</button>
         </div>
 
         <!-- Header with Branch & Repo -->
