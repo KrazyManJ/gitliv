@@ -3,7 +3,7 @@ import HomeView from "../views/HomeViev.vue";
 import LoginSuccessView from "@/views/LoginSuccessView.vue";
 import RepositoryCommitsView from "@/views/RepositoryCommitsView.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
-import CreateRepository from "@/views/CreateRepository.vue";
+import CreateEditRepositoryView from "@/views/CreateEditRepositoryView.vue";
 import RepositoriesView from "../views/RepositoriesView.vue";
 import RepositoryView from "@/views/RepositoryView.vue";
 import RepositoryPullRequestsView from "@/views/RepositoryPullRequestsView.vue";
@@ -43,7 +43,13 @@ const router = createRouter({
         {
             path: "/create-repo",
             name: "Create a Repository",
-            component: CreateRepository,
+            component: CreateEditRepositoryView,
+            meta: { requiresAuth: true },
+        },
+        {
+            path: "/repos/:repo/edit",
+            name: "Edit a Repository",
+            component: CreateEditRepositoryView,
             meta: { requiresAuth: true },
         },
         {
@@ -69,13 +75,10 @@ router.beforeEach((to, from, next) => {
     }
     else if (prohibitsAuth && isAuthenticated()) {
         next("/repositories")
-        console.log("Authorized, to repositories")
     }
     else {
         next();
     }
-
-
 });
 
 router.afterEach((to) => {

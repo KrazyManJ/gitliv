@@ -18,8 +18,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <NavBar/>
-    <div class="max-w-7xl mx-auto min-h-screen">
-        <RouterView />
+    <div class="min-h-screen">
+        <NavBar/>
+        <div class="max-w-7xl mx-auto">
+            <RouterView />
+        </div>
     </div>
 </template>
