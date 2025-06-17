@@ -4,9 +4,10 @@ import type Commit from "@/model/Commit.ts";
 interface CommitProps {
     commit: Commit;
     variant?: "primary" | "secondary";
+    repoName: string;
 }
 
-const { commit, variant = "primary" } = defineProps<CommitProps>();
+const { commit, variant = "primary", repoName } = defineProps<CommitProps>();
 
 const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -16,9 +17,14 @@ const formatDate = (isoDate: string) => {
         day: "numeric",
     });
 };
+const byLineMinWidth = 180;
 </script>
 
 <template>
+    <RouterLink
+        :to="`/repos/${commit.commit.author.name ?? 'unknown-owner'}/${repoName}/commit/${commit.sha}`"
+        class="block group no-underline"
+    >
     <div
         :class="[
       variant === 'primary'
@@ -65,8 +71,7 @@ const formatDate = (isoDate: string) => {
                 {{ formatDate(commit.commit.author.date) }}
             </div>
         </div>
-
-
     </div>
+    </RouterLink>
 </template>
 

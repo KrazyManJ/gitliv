@@ -104,7 +104,7 @@ watch(filteredCommits, async (newVal) => {
         <!-- Header with Branch & Repo -->
         <div class="flex items-center justify-between mb-4">
             <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-                Commits <span class="text-blue-600 text-2xl ml-2">{{ owner }}/{{ repo }}</span>
+                Commits <span class="text-primary text-2xl ml-2">{{ owner }}/{{ repo }}</span>
             </h1>
             <select
                 v-model="selectedBranch"
@@ -124,7 +124,7 @@ watch(filteredCommits, async (newVal) => {
         >
 
             <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
-                <div class="w-[100px] min-w-[100px] pt-6"> <!-- pt-6 = padding-top: 1.5rem = 24px -->
+                <div class="pt-6 w-auto"><!-- pt-6 = padding-top: 1.5rem = 24px -->
                     <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
                 </div>
 
@@ -133,7 +133,7 @@ watch(filteredCommits, async (newVal) => {
                     <div v-else-if="error" class="text-red-600 dark:text-red-400">{{ error }}</div>
                     <ul v-else ref="commitListRef" class="space-y-6">
                         <li v-for="commit in filteredCommits" :key="commit.sha" class="commit-item">
-                            <Commit :commit="commit" />
+                            <Commit :commit="commit" :repo-name="repo" />
                         </li>
                     </ul>
                 </div>

@@ -15,4 +15,13 @@ export default interface Commit {
     branch?: string[];              // All branches this commit appears on
     firstSeenOn?: string;           // Branch we first encountered this commit from
     parents: { sha: string }[];
+    files: {
+        filename: string;
+        status: 'added' | 'modified' | 'removed';
+        sha: string;
+        additions: number;
+        deletions: number;
+        changes: number;
+        patch?: string;
+    }[];
 }

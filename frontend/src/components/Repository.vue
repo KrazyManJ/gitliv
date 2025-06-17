@@ -3,23 +3,19 @@ import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
 import { ref } from "vue";
 import Tile from "./Tile.vue";
-import { api } from "@/api";
-import { useGithubAuthStore } from "@/stores/githubAuth";
 import { LucidePencil, LucideTrash } from "lucide-vue-next";
 
 const { repo } = defineProps<{
     repo: Repo;
 }>();
 
-// const { user } = useGithubAuthStore();
-
-
 const emit = defineEmits<{
-  (e: 'on-delete'): void
+  deleteButtonClick: [repo: Repo],
+  editButtonClick: [repo: Repo]
 }>()
 
 const { getLanguageData } = useLinguistStore();
-const githubAuth = useGithubAuthStore();
+// const githubAuth = useGithubAuthStore();
 
 const langColor = ref("var(--color-zinc-500)");
 
@@ -29,10 +25,10 @@ getLanguageData(repo.language).then((langData) => {
     }
 });
 
-const deleteRepo = async (repo: string) => {
-    await api.delete(`/repos/${githubAuth.user?.username}/${repo}`)
-    emit("on-delete")
-}
+// const deleteRepo = async (repo: string) => {
+//     await api.delete(`/repos/${githubAuth.user?.username}/${repo}`)
+//     emit("deleteClick")
+// }
 
 </script>
 
@@ -60,14 +56,17 @@ const deleteRepo = async (repo: string) => {
             </div>
             <div class="grow" />
             <div class="flex gap-4">
-                <button @click="() => deleteRepo(repo.name)" class="cursor-pointer">
+                <button @click="() => emit('deleteButtonClick',repo)" class="cursor-pointer">
                     <LucideTrash/>
                 </button>
-                <router-link
+                <button @click="() => emit('editButtonClick',repo)" class="cursor-pointer">
+                    <LucidePencil/>
+                </button>
+                <!-- <router-link
                     :to='{name: "Edit a Repository",params: {repo: repo.name}}'
                 >
                     <LucidePencil/>
-                </router-link>
+                </router-link> -->
             </div>
         </div>
     </Tile>

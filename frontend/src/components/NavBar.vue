@@ -2,6 +2,7 @@
     import { useGithubAuthStore } from '@/stores/githubAuth';
 import { useRouter } from 'vue-router';
 import LoadingTile from './LoadingTile.vue';
+import { LucideLogOut } from 'lucide-vue-next';
 
     const authStore = useGithubAuthStore()
     const router = useRouter()
@@ -22,9 +23,10 @@ import LoadingTile from './LoadingTile.vue';
             </RouterLink>
             <div class="grow"></div>
             <div>
-                <div v-if="authStore.user" class="flex items-center gap-4" @click="logout">
+                <div v-if="authStore.user" class="flex items-center gap-4">
                     <div>{{ authStore.user.username }}</div>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
+                    <LucideLogOut class="stroke-red-500" @click="logout"/>
                 </div>
                 <div v-else-if="$route.path!=='/'" class="flex items-center gap-4">
                     <LoadingTile class="w-16 h-2 rounded"/>
