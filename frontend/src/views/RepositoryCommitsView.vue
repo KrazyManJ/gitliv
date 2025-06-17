@@ -118,7 +118,7 @@ watch(filteredCommits, async (newVal) => {
         >
 
             <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
-                <div class="w-[100px] min-w-[100px] pt-6"> <!-- pt-6 = padding-top: 1.5rem = 24px -->
+                <div class="pt-6 w-auto"><!-- pt-6 = padding-top: 1.5rem = 24px -->
                     <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
                 </div>
 
