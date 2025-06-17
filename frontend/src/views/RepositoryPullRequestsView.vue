@@ -65,7 +65,7 @@ async function onPullRequestCreated() {
                     No open pull requests.
                 </li>
                 <li v-for="pr in pullRequests" :key="pr.id">
-                    <PullRequest :pullRequest="pr" />
+                    <PullRequest :pullRequest="pr" :repo-name="repo"/>
                 </li>
             </ul>
         </div>
