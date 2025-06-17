@@ -11,7 +11,7 @@ const { repo } = defineProps<{
     repo: Repo;
 }>();
 
-const { user } = useGithubAuthStore();
+// const { user } = useGithubAuthStore();
 
 
 const emit = defineEmits<{
@@ -40,11 +40,9 @@ const deleteRepo = async (repo: string) => {
 
     <Tile class="flex flex-col gap-4 grow">
         <router-link
-            :to="`/repos/${user?.username}/${repo.name}/commits`"
+            :to="`/repos/${repo.owner.login}/${repo.name}/commits/${repo.default_branch}`"
             class="flex"
         >
-        <!-- <router-link :to="{name: 'Repository',  params: {username: repo.owner.login, name: repo.name, branch: repo.default_branch}}"
-                 class="v-tw-merge"></router-link> -->
             <h3 class="text-xl font-bold">
                 {{ repo.name }}
             </h3>

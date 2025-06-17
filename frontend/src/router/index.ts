@@ -32,11 +32,12 @@ const router = createRouter({
             path: "/:username/repo/:name/:branch",
             name: "Repository",
             component: RepositoryView,
+            meta: { requiresAuth: true },
             props: true
         },
         {
-            path: '/repos/:owner/:repo/commits',
-            name: "commits",
+            path: "/repos/:owner/:repo/commits/:branch",
+            name: "Commits",
             component: RepositoryCommitsView,
             meta: { requiresAuth: true },
         },
