@@ -4,9 +4,10 @@ import type PullRequest from '@/model/PullRequest';
 interface PullRequestProps {
     pullRequest: PullRequest;
     variant?: 'primary' | 'secondary';
+    repoName: string;
 }
 
-const { pullRequest, variant = 'primary' } = defineProps<PullRequestProps>();
+const { pullRequest, variant = 'primary', repoName } = defineProps<PullRequestProps>();
 
 const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -19,6 +20,11 @@ const formatDate = (isoDate: string) => {
 </script>
 
 <template>
+
+    <RouterLink
+        :to="`/repos/${pullRequest.user.login ?? 'unknown-owner'}/${repoName}/pull-requests/${pullRequest.number}`"
+        class="block group no-underline"
+    >
     <div
         :class="[
       variant === 'primary'
@@ -62,4 +68,5 @@ const formatDate = (isoDate: string) => {
             </div>
         </div>
     </div>
+    </RouterLink>
 </template>

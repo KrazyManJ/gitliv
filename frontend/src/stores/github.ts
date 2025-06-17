@@ -8,6 +8,7 @@ import type GitFile from "@/model/GitFile.ts";
 import type GitTree from "@/model/GitTree.ts";
 import type Commit from "@/model/Commit.ts";
 import type PullRequest from "@/model/PullRequest.ts";
+import type PullRequestFile from "@/model/PullRequestFile.ts";
 
 export const useGithubStore = defineStore("github", () => {
 
@@ -169,9 +170,58 @@ export const useGithubStore = defineStore("github", () => {
         }
     };
 
+    const fetchCommitDetails = async (owner: string, repo: string, sha: string) => {
+        try {
+            const { data } = await api.get(`repos/${owner}/${repo}/commits/${sha}`);
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch commit details:", error);
+            throw error;
+        }
+    };
+
+    const fetchPullRequestCommits = async (owner: string, repo: string, prNumber: number) => {
+        try {
+            const { data } = await api.get<Commit[]>(`repos/${owner}/${repo}/pulls/${prNumber}/commits`);
+            return data; // return commit array for the PR
+        } catch (error) {
+            console.error('Failed to fetch PR commits:', error);
+            throw error;
+        }
+    };
+
+    const fetchPullRequest = async (owner: string, repo: string, prNumber: number) => {
+        try {
+            const { data } = await api.get<PullRequest>(`repos/${owner}/${repo}/pulls/${prNumber}`);
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch pull request:", error);
+            throw error;
+        }
+    };
 
 
+    const fetchPullRequestFiles = async (owner: string, repo: string, prNumber: number) => {
+        try {
+            const { data } = await api.get<PullRequestFile[]>(`repos/${owner}/${repo}/pulls/${prNumber}/files`);
+            return data; // return files changed in the PR
+        } catch (error) {
+            console.error('Failed to fetch PR files:', error);
+            throw error;
+        }
+    };
+
+    const mergePullRequest = async (owner: string, repo: string, prNumber: number) => {
+        try {
+            const { data } = await api.put(`repos/${owner}/${repo}/pulls/${prNumber}/merge`);
+            return data; // you could return `merged`, `message`, etc.
+        } catch (error) {
+            console.error("Failed to merge pull request:", error);
+            throw error;
+        }
+    };
 
     return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests, fetchRepos, fetchCommits,
-        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches};
+        fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches,
+        fetchCommitDetails, fetchPullRequest, fetchPullRequestCommits, fetchPullRequestFiles, mergePullRequest};
 });
