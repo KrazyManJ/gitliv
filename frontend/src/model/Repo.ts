@@ -7,6 +7,7 @@ export default interface Repo {
     pushed_at: string;
     updated_at: string;
     default_branch: string;
+    languages_url: string;
     owner: {
         login: string
     };
