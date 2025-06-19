@@ -16,13 +16,13 @@ export const useGithubStore = defineStore("github", () => {
     const userNotOAuth = reactive<{ current: GithubUser | null }>({ current: null });
     const repos = reactive<Repo[]>([]);
     const branches = reactive<Branch[]>([]);
-    // const branch = reactive<{current: Branch | null}>({current: null})
     const treeHistory = ref<string[]>([])
     const isLoading = ref(true)
     const files = reactive<GitFileFromTree[]>([])
     const commits = reactive<Commit[]>([]);
     const pullRequests = reactive<PullRequest[]>([]);
     const fileData = reactive<{current: GitFileSingle | null}>({current: null})
+    const repoData = reactive<{current: Repo | null}>({current: null})
 
 
     // const fetchBranchFromRepo = async (username: string, name: string) => {
@@ -85,6 +85,14 @@ export const useGithubStore = defineStore("github", () => {
         }
     }
 
+
+    const fetchRepo = async (owner:string, repo:string) => {
+        repoData.current = null
+           await api.get<Repo>(`/repos/${owner}/${repo}`).then((response) => {
+                repoData.current = response.data
+                console.log(`Fetched repo: ${response.data}`)
+            })
+    }
 
 
     const fetchRepos = () => {
@@ -239,7 +247,9 @@ export const useGithubStore = defineStore("github", () => {
         }
     };
 
-    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests, fileData,
-        fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo, fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchFile,
-        fetchCommitDetails, fetchPullRequest, fetchPullRequestCommits, fetchPullRequestFiles, mergePullRequest};
+    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests,
+        fileData, repoData, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo,
+        fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchFile,
+        fetchCommitDetails, fetchPullRequest, fetchPullRequestCommits, fetchPullRequestFiles,
+        mergePullRequest, fetchRepo};
 });
