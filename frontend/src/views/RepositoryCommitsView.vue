@@ -101,7 +101,7 @@ watch(filteredCommits, async (newVal) => {
                     PullRequest
                 </router-link>
             </div>
-            <button @click="showModal(CloneModal, {owner, repo})" class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">Clone</button>
+            <button @click="showModal(CloneModal, {owner, repo})" class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600 cursor-pointer">Clone</button>
         </div>
 
         <!-- Header with Branch & Repo -->

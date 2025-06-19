@@ -5,6 +5,7 @@ export default interface Repo {
     language: string;
     svn_url: string;
     clone_url: string;
+    ssh_url: string;
     pushed_at: string;
     updated_at: string;
     default_branch: string;
