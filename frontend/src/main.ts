@@ -8,11 +8,16 @@ import router from "./router";
 import twMergeDirective from "tailwind-merge-vue-directive";
 import { initializeTheme } from "./stores/theme";
 
+import 'highlight.js/styles/stackoverflow-light.css'
+import 'highlight.js/lib/common';
+import hljsVuePlugin from "@highlightjs/vue-plugin";
+
 const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
 app.use(twMergeDirective);
+app.use(hljsVuePlugin)
 
 initializeTheme();
 

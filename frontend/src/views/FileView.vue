@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github.ts";
-import { onMounted, ref } from "vue";
+import {onMounted, ref} from "vue";
 import { storeToRefs } from "pinia";
 import { LucideArrowLeft } from "lucide-vue-next";
+// import hljs from 'highlight.js';
 // import {useRouter} from "vue-router";
 
-// store
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
 const { isLoading } = storeToRefs(store);
 
 // const router = useRouter()
 
-// props
 const props = defineProps<{
     file: string;
     sha: string;
@@ -25,7 +24,12 @@ const { file, sha, username, name, branch } = props;
 
 const fileContent = ref("");
 
+// const codeHighlight = (code: string) => {
+//     return hljs.highlightAuto(code)
+// }
+
 const convertFileContent = (content?: string) => {
+    // fileContent.value = content ? codeHighlight(atob(content)).value : "";
     fileContent.value = content ? atob(content) : "";
 };
 
@@ -34,6 +38,7 @@ onMounted(() => {
         convertFileContent(fileData.current?.content);
     });
 });
+
 </script>
 
 <template>
@@ -43,7 +48,7 @@ onMounted(() => {
             class="ml-2 h-10 w-40 rounded-lg border-2 border-black bg-zinc-300 dark:bg-zinc-700 animate-pulse"
         ></div>
 
-        <div v-else class="flex-col items-center justify-between mb-4">
+        <div v-else class="flex-col items-center justify-between mb-5">
             <router-link :to="{ name: 'Repository', params: { username, name, branch } }">
                 <LucideArrowLeft />
             </router-link>
@@ -58,12 +63,14 @@ onMounted(() => {
                     {{ branch }}
                 </div>
             </div>
-
-<!--            <VueCodeHighlighterMulti :code="fileContent"/>-->
-            <div></div>
+            <highlightjs autodetect :code="fileContent" />
         </div>
     </main>
 </template>
 
-<style scoped>
-</style>
+<!--<style>-->
+<!--    pre code.hljs{-->
+<!--        overflow-x: clip !important;-->
+<!--        overflow-wrap: anywhere;-->
+<!--    }-->
+<!--</style>-->
