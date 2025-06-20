@@ -8,7 +8,8 @@ import router from "./router";
 import twMergeDirective from "tailwind-merge-vue-directive";
 import { initializeTheme } from "./stores/theme";
 
-import 'highlight.js/styles/stackoverflow-light.css'
+import 'highlight.js/styles/github.css'
+import 'highlight.js/styles/github-dark.css'
 import 'highlight.js/lib/common';
 import hljsVuePlugin from "@highlightjs/vue-plugin";
 

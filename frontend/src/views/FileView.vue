@@ -30,7 +30,18 @@ const fileContent = ref("");
 
 const convertFileContent = (content?: string) => {
     // fileContent.value = content ? codeHighlight(atob(content)).value : "";
-    fileContent.value = content ? atob(content) : "";
+    fileContent.value = content ? decodeBase64(content) : "";
+};
+
+const decodeBase64 = (base64: string) => {
+    const binaryString = atob(base64);
+    const len = binaryString.length;
+    const bytes = new Uint8Array(len);
+    for (let i = 0; i < len; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+    }
+    const decoder = new TextDecoder("utf-8");
+    return decoder.decode(bytes);
 };
 
 onMounted(() => {
@@ -68,9 +79,11 @@ onMounted(() => {
     </main>
 </template>
 
-<!--<style>-->
-<!--    pre code.hljs{-->
-<!--        overflow-x: clip !important;-->
-<!--        overflow-wrap: anywhere;-->
-<!--    }-->
-<!--</style>-->
+<style scoped>
+::v-deep(pre code.hljs) {
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+</style>
+
