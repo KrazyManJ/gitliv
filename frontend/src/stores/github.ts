@@ -85,6 +85,12 @@ export const useGithubStore = defineStore("github", () => {
         }
     }
 
+    // const fetchRepoZip = async (owner: string, repo: string) => {
+    //     await api.get(`/repos/${owner}/${repo}/zipball`).then((response) => {
+    //         console.log(response.data)
+    //     })
+    // }
+
 
     const fetchRepo = async (owner:string, repo:string) => {
         repoData.current = null

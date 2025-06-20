@@ -7,6 +7,7 @@ import LoadingTile from "@/components/LoadingTile.vue";
 import { LucideClipboardCopy, LucideCheck, LucideExternalLink } from "lucide-vue-next"
 
 const store = useGithubStore();
+// const { fetchRepo, fetchRepoZip } = store;
 const { fetchRepo } = store;
 const { repoData } = storeToRefs(store);
 
@@ -38,6 +39,10 @@ const copyToClipboard = async (text: string | undefined) => {
         }
     }
 }
+
+// const downloadZip = () => {
+//     fetchRepoZip(props.owner, props.repo).then(() => {console.log("Job Dan")})
+// }
 
 onMounted(() => {
    fetchRepo(props.owner, props.repo).then(() => {
@@ -104,6 +109,7 @@ onMounted(() => {
             >
                 Open in Visual Studio Code <LucideExternalLink/>
             </a>
+<!--            <button @click="downloadZip()">Download a ZIP file</button>-->
         </div>
     </div>
 </template>

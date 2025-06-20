@@ -21,19 +21,15 @@ const props = defineProps<{
     branch: string;
 }>();
 
-// destrukturalizace props
 const { file, sha, username, name, branch } = props;
 
 const fileContent = ref("");
 
-// funkce pro převod base64 obsahu na text
 const convertFileContent = (content?: string) => {
     fileContent.value = content ? atob(content) : "";
 };
 
-// načtení souboru při mountu
 onMounted(() => {
-    console.log(branch);
     fetchFile(sha, username, name).then(() => {
         convertFileContent(fileData.current?.content);
     });
@@ -63,7 +59,8 @@ onMounted(() => {
                 </div>
             </div>
 
-            <div>{{ fileContent }}</div>
+<!--            <VueCodeHighlighterMulti :code="fileContent"/>-->
+            <div></div>
         </div>
     </main>
 </template>
