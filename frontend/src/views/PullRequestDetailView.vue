@@ -4,7 +4,14 @@ import { useRoute, useRouter } from "vue-router";
 import type PullRequest from "@/model/PullRequest";
 import type Commit from "@/model/Commit";
 import type PullRequestFile from "@/model/PullRequestFile";
-import { LucideFilePlus2, LucidePencil, LucideTrash2, LucideChevronDown, LucideChevronUp } from "lucide-vue-next";
+import {
+    LucideFilePlus2,
+    LucidePencil,
+    LucideTrash2,
+    LucideChevronDown,
+    LucideChevronUp,
+    LucideArrowLeft
+} from "lucide-vue-next";
 import CommitComponent from "@/components/Commits.vue";
 import { useGithubStore } from "@/stores/github.ts";
 import CloneModal from "@/views/modal/CloneModal.vue";
@@ -75,6 +82,13 @@ onMounted(fetchPullRequestData);
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
+        <div class="mb-5">
+            <router-link
+                :to="{ name: 'Pull Requests', params: { owner, repo } }"
+            >
+                <LucideArrowLeft />
+            </router-link>
+        </div>
 
         <div v-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
 
