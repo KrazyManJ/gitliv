@@ -11,6 +11,7 @@ import { LucideGithub } from 'lucide-vue-next';
         <h1 class="text-7xl font-mono pt-32 font-bold">GitLiv</h1>
         <p><i>Live your live without git-pain.</i></p>
         <Button
+            data-cy="login"
             @click="useGithubAuthStore().redirectToGithubOAuth()"
             variant="primary"
             text-style="mono"

@@ -26,7 +26,7 @@ import { LucideLogOut } from 'lucide-vue-next';
                 <div v-if="authStore.user" class="flex items-center gap-4">
                     <span class="font-mono font-light">{{ authStore.user.username }}</span>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
-                    <LucideLogOut class="stroke-red-500 cursor-pointer hover:stroke-red-400 transition-colors" @click="logout"/>
+                    <LucideLogOut data-cy="logout" class="stroke-red-500 cursor-pointer hover:stroke-red-400 transition-colors" @click="logout"/>
                 </div>
                 <div v-else-if="$route.path!=='/'" class="flex items-center gap-4">
                     <LoadingTile class="w-16 h-2 rounded"/>
