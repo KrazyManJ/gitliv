@@ -12,7 +12,11 @@ export const useGithubAuthStore = defineStore("githubAuth", () => {
     const user = ref<GithubOAuthUser | null>()
 
     const redirectToGithubOAuth = () => {
-        window.location.href = `http://localhost:3001/github/login`
+        const hostname = window.location.hostname
+        const newPort = '3001'
+        const newPath = '/github/login'
+
+        window.location.href = `http://${hostname}:${newPort}${newPath}`
     }
 
     const loadUserFromCookies = async () => {

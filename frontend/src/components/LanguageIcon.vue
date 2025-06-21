@@ -26,8 +26,6 @@ const iconId = (
     })[language.toLowerCase()] ?? language
 ).toLowerCase()
 
-console.log(language)
-
 const simpleIconPath = computed<string | null>(() => {
     if (isDevicon.value) return null
     const key = Object.keys(simpleIcons).find(k => k.toLowerCase() === `si${iconId}`)
