@@ -10,6 +10,10 @@ const { label, rules } = defineProps<{
     rules?: Rule[]
 }>()
 
+defineOptions({
+    inheritAttrs: false
+})
+
 const model = defineModel()
 
 const attrs = useAttrs()

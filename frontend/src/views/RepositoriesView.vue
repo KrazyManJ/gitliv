@@ -28,7 +28,7 @@ const state = reactive<{
 <template>
     <main class="p-8 flex flex-col gap-8">
         <button @click="showModal(CreateEditRepositoryModal,{})">
-            <LucidePlus></LucidePlus>
+            <LucidePlus/>
         </button>
         <GithubLanguageStats/>
         <Input v-model="state.searchInput" placeholder="Search..." />

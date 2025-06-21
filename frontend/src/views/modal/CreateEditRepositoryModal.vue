@@ -90,6 +90,7 @@ const modalRef = useTemplateRef("modalRef");
                 v-model="state.name"
                 :rules="nameRules"
                 ref="modalRef"
+                class="font-mono"
             />
             <Input
                 label="Description" v-model="state.description"

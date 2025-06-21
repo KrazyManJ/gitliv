@@ -2,7 +2,8 @@
 
 import { useModalStore } from '@/stores/modal'
 import Tile from './Tile.vue';
-import { computed, reactive, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
+import { LucideX } from 'lucide-vue-next';
 const { state, hideModal } = useModalStore()
 
 const handleModalOutsideClick = (event: MouseEvent) => {
@@ -49,6 +50,9 @@ watch(() => state.isVisible, (visible) => {
             @keyup="handleModalKeyUp"
         >
             <Tile class="max-w-lg w-full shadow-xl">
+                <div v-if="state.options.canClose" class="flex justify-end">
+                    <LucideX :size="16" class="stroke-red-400"/>
+                </div>
                 <component :is="state.content" v-bind="state.props"/>
             </Tile>
         </div>
