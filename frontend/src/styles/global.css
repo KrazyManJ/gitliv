@@ -4,10 +4,13 @@
 
 @layer theme {
     #app {
+        @import 'highlight.js/styles/github.css';
         @apply bg-zinc-100;
     }
 
-    * {
+    *
+    :not(.hljs, .hljs *)
+    {
         @apply text-zinc-900;
     }
 
@@ -15,7 +18,10 @@
         @apply bg-zinc-900;
     }
 
-    #app.dark * {
+    #app.dark *
+    :not(.hljs, .hljs *)
+    {
+        @import 'highlight.js/styles/github-dark.css';
         @apply text-zinc-100;
     }
 }

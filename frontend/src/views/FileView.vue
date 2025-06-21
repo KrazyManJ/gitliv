@@ -3,14 +3,11 @@ import { useGithubStore } from "@/stores/github.ts";
 import {onMounted, ref} from "vue";
 import { storeToRefs } from "pinia";
 import { LucideArrowLeft } from "lucide-vue-next";
-// import hljs from 'highlight.js';
-// import {useRouter} from "vue-router";
 
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
 const { isLoading } = storeToRefs(store);
 
-// const router = useRouter()
 
 const props = defineProps<{
     file: string;
@@ -24,12 +21,7 @@ const { file, sha, username, name, branch } = props;
 
 const fileContent = ref("");
 
-// const codeHighlight = (code: string) => {
-//     return hljs.highlightAuto(code)
-// }
-
 const convertFileContent = (content?: string) => {
-    // fileContent.value = content ? codeHighlight(atob(content)).value : "";
     fileContent.value = content ? decodeBase64(content) : "";
 };
 
