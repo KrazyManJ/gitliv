@@ -94,6 +94,7 @@ onMounted(() => {
             <!-- File List -->
             <div v-else class="flex flex-col">
                 <File
+                    data-cy="file"
                     v-for="file in files"
                     :key="file.sha"
                     :file="file"
