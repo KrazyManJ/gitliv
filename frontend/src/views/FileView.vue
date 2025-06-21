@@ -8,7 +8,6 @@ const store = useGithubStore();
 const { fetchFile, fileData } = store;
 const { isLoading } = storeToRefs(store);
 
-
 const props = defineProps<{
     file: string;
     sha: string;
