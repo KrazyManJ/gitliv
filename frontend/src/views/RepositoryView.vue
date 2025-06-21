@@ -50,7 +50,7 @@ const selectedBranch = ref("")
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div class="flex-col items-center justify-between mb-4">
+        <div class="flex-col items-center justify-between mb-5">
           <router-link :to="{ name: 'Commits', params: { owner:username, repo:name, branch:branch } }">
             <LucideArrowLeft />
           </router-link>

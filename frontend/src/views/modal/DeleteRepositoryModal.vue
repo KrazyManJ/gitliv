@@ -6,7 +6,7 @@ import Input from '@/components/Input.vue';
 import type Repo from '@/model/Repo';
 import { useGithubAuthStore } from '@/stores/githubAuth';
 import { useModalStore } from '@/stores/modal';
-import { LucideTrash } from 'lucide-vue-next';
+import { LucideTrash, LucideX } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 
 const { repo } = defineProps<{
@@ -21,6 +21,8 @@ const state = reactive<{
     proceeding: false
 })
 
+const { hideModal } = useModalStore()
+
 const githubAuth = useGithubAuthStore()
 
 const fullRepoName = computed(() =>`${githubAuth.user?.username}/${repo.name}` )
@@ -30,7 +32,7 @@ const handleClick = async () => {
     if (state.confirmInput === `${githubAuth.user?.username}/${repo.name}`) {
         state.proceeding = true
         await api.delete(`/repos/${fullRepoName.value}`)
-        useModalStore().hideModal()
+        hideModal()
     }
 }
 
@@ -48,19 +50,30 @@ const handleClick = async () => {
         </div>
         <div class="">
             <p class="select-none pointer-none mb-2 text-center text-sm">
-                To delete repository, enter <InlineCode>{{ fullRepoName }}</InlineCode>
+                To delete repository, enter <InlineCode>{{ fullRepoName }}</InlineCode> and confirm below.
             </p>
             <Input v-model="state.confirmInput" />
         </div>
-        <Button
-            variant="important"
-            text-style="mono"
-            @click="handleClick"
-            :disabled="state.confirmInput !== fullRepoName"
-            :loading="state.proceeding"
-        >
-            <LucideTrash :size="20" class="stroke-zinc-100"/>
-            Delete
-        </Button>
+        <div class="flex justify-evenly px-8 gap-16">
+            <Button
+                text-style="mono"
+                @click="hideModal"
+                class="grow"
+                >
+                <LucideX :size="20" class="stroke-zinc-100"/>
+                Cancel
+            </Button>
+            <Button
+                variant="important"
+                text-style="mono"
+                @click="handleClick"
+                :disabled="state.confirmInput !== fullRepoName"
+                :loading="state.proceeding"
+                class="grow"
+            >
+                <LucideTrash :size="20" class="stroke-zinc-100"/>
+                Delete
+            </Button>
+        </div>
     </div>
 </template>

@@ -42,7 +42,7 @@ async function onPullRequestCreated() {
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div class="mb-2">
+        <div class="mb-5">
             <router-link :to="{ name: 'Commits', params: { owner:owner, repo:repo, branch:'main' } }">
                 <LucideArrowLeft />
             </router-link>

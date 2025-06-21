@@ -1,34 +1,43 @@
 <script setup lang="ts">
 import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
-import { ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import Tile from "./Tile.vue";
 import { LucidePencil, LucideTrash } from "lucide-vue-next";
+import LanguageIcon from "./LanguageIcon.vue";
+import { api } from "@/api";
 
 const { repo } = defineProps<{
     repo: Repo;
 }>();
 
 const emit = defineEmits<{
-  deleteButtonClick: [repo: Repo],
-  editButtonClick: [repo: Repo]
+    deleteButtonClick: [repo: Repo],
+    editButtonClick: [repo: Repo]
 }>()
 
 const { getLanguageData } = useLinguistStore();
-// const githubAuth = useGithubAuthStore();
+
+const state = reactive<{
+    languages: string[]
+}>({
+    languages: []
+})
 
 const langColor = ref("var(--color-zinc-500)");
 
-getLanguageData(repo.language).then((langData) => {
-    if (langData) {
-        langColor.value = langData.color;
-    }
-});
 
-// const deleteRepo = async (repo: string) => {
-//     await api.delete(`/repos/${githubAuth.user?.username}/${repo}`)
-//     emit("deleteClick")
-// }
+
+onMounted(() => {
+    api.get<Record<string,number>>(repo.languages_url).then(({data}) => {
+        state.languages = Object.entries(data).sort(([,a],[,b]) => b-a).map(([k,])=>k)
+    })
+    getLanguageData(repo.language).then((langData) => {
+        if (langData) {
+            langColor.value = langData.color;
+        }
+    });
+})
 
 </script>
 
@@ -50,10 +59,14 @@ getLanguageData(repo.language).then((langData) => {
             <p v-else class="italic">No description provided</p>
         </div>
         <div class="flex">
-            <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
-                <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
-                <span>{{ repo.language }}</span>
+            <div class="ml-2 flex gap-2 items-center">
+                <LanguageIcon v-for="(lang,i) in state.languages" :language="lang" :key="i" />
             </div>
+            <!-- <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
+                <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
+                <SimpleIcon :language="repo.language" :style="`fill: ${langColor};`"/>
+                <span>{{ repo.language }}</span>
+            </div> -->
             <div class="grow" />
             <div class="flex gap-4">
                 <button @click="() => emit('deleteButtonClick',repo)" class="cursor-pointer">

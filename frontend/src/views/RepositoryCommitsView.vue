@@ -5,6 +5,8 @@ import { useGithubStore } from "@/stores/github";
 import Commit from "@/components/Commits.vue";
 import GitGraph from "@/components/GitGraph.vue";
 import {LucideArrowLeft} from "lucide-vue-next";
+import {useModalStore} from "@/stores/modal.ts";
+import CloneModal from "@/views/modal/CloneModal.vue";
 
 const route = useRoute();
 const owner = route.params.owner as string;
@@ -12,6 +14,7 @@ const repo = route.params.repo as string;
 const branch = route.params.branch as string;
 
 const { commits, fetchCommits } = useGithubStore();
+const {showModal} = useModalStore()
 
 const isLoading = ref(true);
 const error = ref<string | null>(null);
@@ -80,7 +83,7 @@ watch(filteredCommits, async (newVal) => {
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
         <!-- Top Controls -->
-        <div class="mb-2">
+        <div class="mb-5">
             <router-link :to="{ name: 'Repositories'}">
                 <LucideArrowLeft />
             </router-link>
@@ -98,7 +101,7 @@ watch(filteredCommits, async (newVal) => {
                     PullRequest
                 </router-link>
             </div>
-            <button class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600">CloneModalPlace</button>
+            <button @click="showModal(CloneModal, {owner, repo})" class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600 cursor-pointer">Clone</button>
         </div>
 
         <!-- Header with Branch & Repo -->
