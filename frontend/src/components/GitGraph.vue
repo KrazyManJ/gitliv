@@ -1,7 +1,5 @@
 <template>
-    <div class="p-2 rounded bg-white dark:bg-zinc-800 shadow-md">
         <div ref="gitGraphContainer" class="w-full h-full" />
-    </div>
 </template>
 
 <script lang="ts">

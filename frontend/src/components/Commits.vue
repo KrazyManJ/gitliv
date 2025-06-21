@@ -5,24 +5,27 @@ interface CommitProps {
     commit: Commit;
     variant?: "primary" | "secondary";
     repoName: string;
+    branch: string;
 }
 
-const { commit, variant = "primary", repoName } = defineProps<CommitProps>();
+const { commit, variant = "primary", repoName, branch } = defineProps<CommitProps>();
 
 const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
-    return date.toLocaleDateString(undefined, {
-        year: "numeric",
-        month: "short",
+    const dayMonth = date.toLocaleDateString(undefined, {
         day: "numeric",
+        month: "numeric",
     });
+    const year = date.getFullYear();
+    return `${dayMonth}\n${year}`;
 };
+
 const byLineMinWidth = 180;
 </script>
 
 <template>
     <RouterLink
-        :to="`/repos/${commit.commit.author.name ?? 'unknown-owner'}/${repoName}/commit/${commit.sha}`"
+        :to="`/repos/${commit.commit.author.name ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
         class="block group no-underline"
     >
     <div
@@ -50,7 +53,6 @@ const byLineMinWidth = 180;
                         {{ commit.commit.message }}
                     </div>
 
-                    <!-- Wrap the by/author/sha line with min-width so it never truncates -->
                     <div
                         class="text-sm text-gray-600 dark:text-gray-300 mt-1 whitespace-nowrap flex-shrink-0"
                         :style="{ minWidth: byLineMinWidth + 'px' }"
@@ -60,13 +62,13 @@ const byLineMinWidth = 180;
                         <span class="font-medium">
           {{ commit.author?.login ?? commit.commit.author.name }}
         </span>
-                        <span class="ml-2 text-gray-400">({{ commit.sha.slice(0, 7) }})</span>
+                        <span class="ml-2 text-gray-400 hidden sm:inline">({{ commit.sha.slice(0, 7) }})</span>
                     </div>
                 </div>
             </div>
 
             <div
-                class="text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap ml-auto flex-shrink-0 max-w-full truncate text-right"
+                class="text-sm text-gray-500 dark:text-gray-400 ml-auto text-right break-words max-w-[120px] whitespace-pre-line sm:whitespace-nowrap"
             >
                 {{ formatDate(commit.commit.author.date) }}
             </div>

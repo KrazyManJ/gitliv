@@ -23,6 +23,7 @@ export const useGithubStore = defineStore("github", () => {
     const pullRequests = reactive<PullRequest[]>([]);
     const fileData = reactive<{current: GitFileSingle | null}>({current: null})
     const repoData = reactive<{current: Repo | null}>({current: null})
+    const hasLoadedOnce = ref(false);
 
 
     // const fetchBranchFromRepo = async (username: string, name: string) => {
@@ -56,20 +57,23 @@ export const useGithubStore = defineStore("github", () => {
     }
 
     const fetchFilesFromRepoFirst = async (username: string, name: string, branch: string) => {
-        files.splice(0, files.length);
         isLoading.value = true;
+        hasLoadedOnce.value = false;
 
         try {
             const { data } = await api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`);
             const response = await api.get<GitTree>(data.commit.commit.tree.url);
-            treeHistory.value.splice(0, treeHistory.value.length)
-            treeHistory.value.push(response.data.sha)
+            treeHistory.value.splice(0, treeHistory.value.length);
+            treeHistory.value.push(response.data.sha);
+
+            files.splice(0, files.length);
             response.data.tree.forEach((file: GitFileFromTree) => files.push(file));
-            console.log(response.data)
         } finally {
             isLoading.value = false;
+            hasLoadedOnce.value = true;
         }
     };
+
 
 
     const fetchFilesFromRepo = async (username: string, name: string, treePath: string) => {
@@ -202,9 +206,9 @@ export const useGithubStore = defineStore("github", () => {
         }
     };
 
-    const fetchCommitDetails = async (owner: string, repo: string, sha: string) => {
+    const fetchCommitDetails = async (owner: string, repo: string, branch: string,sha: string) => {
         try {
-            const { data } = await api.get(`repos/${owner}/${repo}/commits/${sha}`);
+            const { data } = await api.get(`repos/${owner}/${repo}/${branch}/commits/${sha}`);
             return data;
         } catch (error) {
             console.error("Failed to fetch commit details:", error);
@@ -254,7 +258,7 @@ export const useGithubStore = defineStore("github", () => {
     };
 
     return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests,
-        fileData, repoData, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo,
+        fileData, repoData, hasLoadedOnce, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo,
         fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchFile,
         fetchCommitDetails, fetchPullRequest, fetchPullRequestCommits, fetchPullRequestFiles,
         mergePullRequest, fetchRepo};

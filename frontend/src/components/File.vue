@@ -1,51 +1,70 @@
 <script setup lang="ts">
-
 import type GitFileFromTree from "@/model/GitFileFromTree.ts";
-import {useGithubStore} from "@/stores/github.ts";
-import {storeToRefs} from "pinia";
+import { useGithubStore } from "@/stores/github.ts";
+import { storeToRefs } from "pinia";
 import { LucideFolder, LucideFile } from "lucide-vue-next";
 
-const store = useGithubStore()
-const {fetchFilesFromRepo} = store
-const {treeHistory} = storeToRefs(store)
+const store = useGithubStore();
+const { fetchFilesFromRepo } = store;
+const { treeHistory } = storeToRefs(store);
 
 const props = defineProps<{
-    file: GitFileFromTree,
-    username: string,
-    name: string,
-    branch: string
+    file: GitFileFromTree;
+    username: string;
+    name: string;
+    branch: string;
 }>();
 
-const changeDisplayedFiles = (treePath: string | undefined) => {
-    if(treePath){
-        treeHistory.value.push(treePath)
-        fetchFilesFromRepo(props.username, props.name, treePath)
-    }
-}
+const isFolder = props.file.type === "tree";
 
+const openFolder = (treePath: string | undefined) => {
+    if (treePath) {
+        treeHistory.value.push(treePath);
+        fetchFilesFromRepo(props.username, props.name, treePath);
+    }
+};
 </script>
 
 <template>
-    <button
-        class="flex items-center rounded-lg border-2 border-solid border-black w-full p-4 mb-1"
-        v-if="file.type === 'tree'"
-        @click="changeDisplayedFiles(file.url.split('/').pop())"
+    <div
+        class="group block"
+        v-tw-merge
     >
-        <LucideFolder />
-        <span class="pl-2">{{ file.path }}</span>
-    </button>
+        <button
+            v-if="isFolder"
+            @click="openFolder(file.url.split('/').pop())"
+            :class="[
+        'w-full flex items-center gap-4 p-4 rounded-lg border shadow-sm transition hover:brightness-105',
+        'bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 no-underline',
+      ]"
+        >
+            <LucideFolder class="w-6 h-6 text-zinc-600 dark:text-zinc-300 flex-shrink-0" />
+            <span class="text-sm font-mono text-zinc-800 dark:text-white truncate">
+        {{ file.path }}
+      </span>
+        </button>
 
-    <router-link :to="{name:'File', params:{file:file.path, name:name, username:username, branch:branch,
-    sha:file.sha}}"
-                 class="flex items-center rounded-lg
-                 border-2 border-solid
-                 border-black w-full p-4 mb-1" v-else>
-        <LucideFile />
-        <span class="pl-2">{{ file.path }}</span>
-    </router-link>
-
+        <RouterLink
+            v-else
+            :to="{
+        name: 'File',
+        params: {
+          file: file.path,
+          name: name,
+          username: username,
+          branch: branch,
+          sha: file.sha,
+        },
+      }"
+            :class="[
+        'w-full flex items-center gap-4 p-4 rounded-lg border shadow-sm transition hover:brightness-105',
+        'bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 no-underline',
+      ]"
+        >
+            <LucideFile class="w-6 h-6 text-zinc-600 dark:text-zinc-300 flex-shrink-0" />
+            <span class="text-sm font-mono text-zinc-800 dark:text-white truncate">
+        {{ file.path }}
+      </span>
+        </RouterLink>
+    </div>
 </template>
-
-<style scoped>
-
-</style>

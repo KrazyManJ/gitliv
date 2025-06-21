@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github.ts";
-import {onMounted, ref} from "vue";
+import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { LucideArrowLeft } from "lucide-vue-next";
 
@@ -27,13 +27,15 @@ const convertFileContent = (content?: string) => {
 
 const decodeBase64 = (base64: string) => {
     const binaryString = atob(base64);
-    const len = binaryString.length;
-    const bytes = new Uint8Array(len);
-    for (let i = 0; i < len; i++) {
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
         bytes[i] = binaryString.charCodeAt(i);
     }
-    const decoder = new TextDecoder("utf-8");
-    return decoder.decode(bytes);
+    return new TextDecoder("utf-8").decode(bytes);
+};
+
+const convertFileContent = (content?: string) => {
+    fileContent.value = content ? decodeBase64(content) : "";
 };
 
 onMounted(() => {
@@ -41,32 +43,37 @@ onMounted(() => {
         convertFileContent(fileData.current?.content);
     });
 });
-
 </script>
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div
-            v-if="isLoading"
-            class="ml-2 h-10 w-40 rounded-lg border-2 border-black bg-zinc-300 dark:bg-zinc-700 animate-pulse"
-        ></div>
+        <!-- Loading -->
+        <div v-if="isLoading" class="space-y-4">
+            <div class="w-64 h-8 bg-zinc-300 dark:bg-zinc-700 rounded-lg animate-pulse" />
+            <div class="h-80 bg-zinc-200 dark:bg-zinc-800 rounded-lg animate-pulse" />
+        </div>
 
-        <div v-else class="flex-col items-center justify-between mb-5">
-            <router-link :to="{ name: 'Repository', params: { username, name, branch } }">
-                <LucideArrowLeft />
-            </router-link>
-
-            <div class="flex items-center">
-                <h1 class="pr-2 mb-1 text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-                    {{ file }}
-                </h1>
-                <div
-                    class="border-2 border-black rounded-lg p-2 mb-2 ml-2 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100"
-                >
-                    {{ branch }}
-                </div>
+        <!-- File Display -->
+        <div v-else class="space-y-8 py-4">
+            <!-- Back Link -->
+            <div class="mb-4">
+                <router-link :to="{ name: 'Repository', params: { username, name, branch } }">
+                    <LucideArrowLeft class="mr-3 w-6 h-6 text-zinc-600 dark:text-zinc-300" />
+                </router-link>
             </div>
-            <highlightjs autodetect :code="fileContent" />
+
+            <!-- File Header -->
+            <div class="mb-2 space-y-4">
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 break-all">{{ file }}</h1>
+                <p class="text-sm text-primary dark:text-primary font-mono">Branch: {{ branch }}</p>
+            </div>
+
+            <!-- File Content -->
+            <div
+                class="overflow-x-auto whitespace-pre-wrap bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded p-4 font-mono text-sm leading-relaxed"
+            >
+                <highlightjs autodetect :code="fileContent" />
+            </div>
         </div>
     </main>
 </template>
@@ -78,4 +85,3 @@ onMounted(() => {
     overflow-wrap: anywhere;
 }
 </style>
-
