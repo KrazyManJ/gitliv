@@ -47,6 +47,28 @@ describe('All test, ready?', () => {
         cy.get('[data-cy="dropDown"]').click()
         cy.get('[data-cy="dark"]').click()
         cy.get('[data-cy="dropDown"]').click()
+        cy.get('body').should('have.class', 'dark')
+    })
+
+    it('Change theme to light mode', () => {
+        cy.get('[data-cy="dropDown"]').click()
+        cy.get('[data-cy="light"]').click()
+        cy.get('[data-cy="dropDown"]').click()
+        cy.get('body').should('not.have.class', 'dark')
+    })
+
+    it('Change theme to system mode', () => {
+        cy.get('[data-cy="dropDown"]').click()
+        cy.get('[data-cy="system"]').click()
+        cy.get('[data-cy="dropDown"]').click()
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+            if (prefersDark) {
+                // testuj něco pro dark
+                cy.get('body').should('have.class', 'dark')
+            } else {
+                // testuj něco pro light
+                cy.get('body').should('not.have.class', 'dark')
+            }
     })
 
     // it('Add repository', () => {
