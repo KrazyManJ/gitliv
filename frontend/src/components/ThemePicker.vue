@@ -11,27 +11,27 @@ const themeDef = {
     light: Sun,
     system: MonitorSmartphone,
 };
+
 </script>
 
 <template>
-    <Tile class="flex flex-col gap-4">
-        <h1 class="text-xl">Theme setting</h1>
-        <div class="flex gap-4">
-            <Tile
-                v-for="(Icon, themeVal) of themeDef"
-                :key="themeVal"
-                class="flex flex-col grow basis-1 items-center gap-2 cursor-pointer"
-                @click="() => (theme = themeVal)"
-                variant="secondary"
-            >
-                <component :is="Icon" :size="48" />
-                <div>
-                    {{ themeVal[0].toLocaleUpperCase() + themeVal.substring(1) }}
-                    <span v-if="theme === themeVal" class="dark:text-zinc-400 font-light">
-                        (current)
-                    </span>
-                </div>
-            </Tile>
-        </div>
-    </Tile>
+    <div class="flex gap-2 p-2">
+        <Tile
+            v-for="(Icon, themeVal) of themeDef"
+            :key="themeVal"
+            :class='[
+                "flex p-1 flex-col items-center justify-center gap-1 cursor-pointer w-16 h-16",
+                {
+                    "bg-zinc-300 dark:bg-zinc-500": theme == themeVal
+                }
+            ]'
+            @click="() => (theme = themeVal)"
+            variant="secondary"
+        >
+            <component :is="Icon" :size="24" />
+            <div class="text-xs">
+                {{ themeVal[0].toLocaleUpperCase() + themeVal.substring(1) }}
+            </div>
+        </Tile>
+    </div>
 </template>

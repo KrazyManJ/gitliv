@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github";
 import Repository from "@/components/Repository.vue";
-import ThemePicker from "@/components/ThemePicker.vue";
 import { LucidePlus } from "lucide-vue-next";
 import { useModalStore } from "@/stores/modal";
 import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
@@ -42,6 +41,5 @@ const state = reactive<{
                 @delete-button-click="(repo) => showModal(DeleteRepositoryModal,{repo: repo}, {onHide: fetchRepos})"
             />
         </div>
-        <ThemePicker />
     </main>
 </template>
