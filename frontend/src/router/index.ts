@@ -56,7 +56,7 @@ const router = createRouter({
             meta: { requiresAuth: true },
             props: true,
         },{
-            path: "/repos/:owner/:repo/commit/:sha",
+            path: "/repos/:owner/:repo/:branch/commit/:sha",
             name: "Commit Details",
             component: CommitDetailView,
             meta: { requiresAuth: true },

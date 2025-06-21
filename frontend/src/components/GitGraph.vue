@@ -1,7 +1,5 @@
 <template>
-    <div class="p-2 rounded bg-white dark:bg-zinc-800 shadow-md">
         <div ref="gitGraphContainer" class="w-full h-full" />
-    </div>
 </template>
 
 <script lang="ts">
@@ -36,7 +34,12 @@ export default defineComponent({
 
             const gitgraph = createGitgraph(gitGraphContainer.value, {
                 template: templateExtend(TemplateName.Metro, {
-                    colors: ["#F87171", "#60A5FA", "#34D399", "#FBBF24"],
+                    colors: [
+                        "#7310B0",
+                        "#D946EF",
+                        "#A78BFA",
+                        "#2C1065",
+                    ],
                     branch: {
                         lineWidth: 4,
                         spacing: 40,

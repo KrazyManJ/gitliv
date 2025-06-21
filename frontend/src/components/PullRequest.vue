@@ -59,7 +59,7 @@ const formatDate = (isoDate: string) => {
         </div>
 
         <!-- Right side: target branch and creation date -->
-        <div class="flex flex-col items-end flex-shrink-0 ml-4 min-w-[120px] text-right">
+        <div class="text-sm text-gray-500 dark:text-gray-400 ml-auto text-right break-words max-w-[120px] whitespace-pre-line sm:whitespace-nowrap">
             <div class="text-sm text-gray-500 dark:text-gray-400 font-medium whitespace-nowrap">
                 → {{ pullRequest.base.ref }}
             </div>

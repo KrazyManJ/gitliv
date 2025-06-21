@@ -7,6 +7,9 @@ import GitGraph from "@/components/GitGraph.vue";
 import {LucideArrowLeft} from "lucide-vue-next";
 import {useModalStore} from "@/stores/modal.ts";
 import CloneModal from "@/views/modal/CloneModal.vue";
+import Loading from "@/components/LoadingTile.vue";
+import BranchSelect from "@/components/Select.vue";
+import MyButton from "@/components/Button.vue";
 
 const route = useRoute();
 const owner = route.params.owner as string;
@@ -34,6 +37,17 @@ const branches = computed(() => {
     return Array.from(branchSet).sort();
 });
 
+const branchOptions = computed(() => {
+    return {
+        "All branches": "All branches",
+        ...branches.value.reduce((acc, b) => {
+            acc[b] = b;
+            return acc;
+        }, {} as Record<string, string>)
+    };
+});
+
+
 const filteredCommits = computed(() => {
     if (selectedBranch.value === "All branches") {
         return commits;
@@ -47,10 +61,20 @@ async function measureCommitHeight() {
     if (listEl) {
         const firstItem = listEl.querySelector(".commit-item") as HTMLElement | null;
         if (firstItem) {
-            commitHeight.value = firstItem.clientHeight + 23;
+            commitHeight.value = firstItem.clientHeight + 16.5;
         }
     }
 }
+function debounce(fn: () => void, delay: number) {
+    let timeout: number;
+    return () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            fn();
+        }, delay);
+    };
+}
+const debouncedMeasure = debounce(measureCommitHeight, 200);
 
 onMounted(async () => {
     try {
@@ -63,13 +87,12 @@ onMounted(async () => {
         await measureCommitHeight();
     }
 
-    window.addEventListener("resize", measureCommitHeight);
+    window.addEventListener("resize", debouncedMeasure);
 });
 
 onBeforeUnmount(() => {
-    window.removeEventListener("resize", measureCommitHeight);
+    window.removeEventListener("resize", debouncedMeasure);
 });
-
 watch(filteredCommits, async (newVal) => {
     if (newVal.length) {
         await measureCommitHeight();
@@ -88,55 +111,81 @@ watch(filteredCommits, async (newVal) => {
                 <LucideArrowLeft />
             </router-link>
         </div>
-        <div class="flex justify-between items-center mb-6">
-            <div class="flex gap-4">
-                <button class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded">
-                    <router-link :to="{name: 'Repository',  params: {username: owner, name: repo, branch: branch}}"
-                                 class="v-tw-merge">Source</router-link>
-                </button>
+        <div class="flex flex-wrap gap-3 justify-between items-center mb-6">
+            <!-- Left Buttons -->
+            <div class="flex flex-wrap gap-3">
+                <router-link
+                    :to="{ name: 'Repository', params: { username: owner, name: repo, branch: branch } }"
+                    custom
+                    v-slot="{ navigate, href, isActive, isExactActive }"
+                >
+                    <MyButton variant="normal" @click="navigate" class="cursor-pointer">
+                        Source
+                    </MyButton>
+                </router-link>
+
                 <router-link
                     :to="`/repos/${owner}/${repo}/pull-requests`"
-                    class="bg-zinc-300 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 px-4 py-2 rounded hover:bg-zinc-400 dark:hover:bg-zinc-600 inline-block text-center"
+                    custom
+                    v-slot="{ navigate, href, isActive, isExactActive }"
                 >
-                    PullRequest
+                    <MyButton variant="normal" @click="navigate" class="cursor-pointer">
+                        Pull Request
+                    </MyButton>
                 </router-link>
             </div>
-            <button @click="showModal(CloneModal, {owner, repo})" class="bg-zinc-700 text-white px-6 py-2 rounded hover:bg-zinc-600 cursor-pointer">Clone</button>
+
+            <!-- Clone Button -->
+            <MyButton
+                variant="primary"
+                @click="showModal(CloneModal, { owner, repo })"
+            >
+                Clone
+            </MyButton>
         </div>
 
-        <!-- Header with Branch & Repo -->
-        <div class="flex items-center justify-between mb-4">
-            <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-                Commits <span class="text-primary text-2xl ml-2">{{ owner }}/{{ repo }}</span>
-            </h1>
-            <select
-                v-model="selectedBranch"
-                class="border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-zinc-800 dark:text-zinc-100 px-4 py-2 rounded"
-            >
-                <option value="All branches">All branches</option>
-                <option v-for="branch in branches" :key="branch" :value="branch">
-                    {{ branch }}
-                </option>
-            </select>
 
+
+
+        <!-- Header with Branch & Repo -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+                Commits <span class="text-primary text-2xl ml-2 break-words">{{ owner }}/{{ repo }}</span>
+            </h1>
+            <BranchSelect
+                label=""
+                :options="branchOptions"
+                v-model="selectedBranch"
+                class="max-w-[200px] w-full sm:w-auto"
+            />
         </div>
 
         <!-- Commit Box -->
         <div
-            class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden"
+            class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden pb-6"
         >
 
-            <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
-                <div class="pt-6 w-auto"><!-- pt-6 = padding-top: 1.5rem = 24px -->
-                    <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
-                </div>
+        <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
+            <div
+                v-if="!isLoading && filteredCommits.length"
+                class="pt-6 w-auto hidden md:block"
+            >
+                <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
+            </div>
 
-                <div class="flex-1 min-w-0">
-                    <div v-if="isLoading">Loading commits...</div>
+
+            <div class="flex-1 min-w-0">
+                    <div v-if="isLoading" class="flex-1 min-w-0 space-y-4">
+                        <Loading
+                            v-for="n in 5"
+                            :key="n"
+                            class="h-[96px] w-full rounded-lg shadow-sm border"
+                        />
+                    </div>
                     <div v-else-if="error" class="text-red-600 dark:text-red-400">{{ error }}</div>
-                    <ul v-else ref="commitListRef" class="space-y-6">
+                    <ul v-else ref="commitListRef" class="space-y-4">
                         <li v-for="commit in filteredCommits" :key="commit.sha" class="commit-item">
-                            <Commit :commit="commit" :repo-name="repo" />
+                            <Commit :commit="commit" :repo-name="repo" :branch="branch"/>
                         </li>
                     </ul>
                 </div>
