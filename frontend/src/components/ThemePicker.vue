@@ -25,6 +25,7 @@ const themeDef = {
                     "bg-zinc-300 dark:bg-zinc-500": theme == themeVal
                 }
             ]'
+            :data-cy="themeVal"
             @click="() => (theme = themeVal)"
             variant="secondary"
         >

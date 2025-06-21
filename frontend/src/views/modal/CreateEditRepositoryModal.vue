@@ -86,6 +86,7 @@ const modalRef = useTemplateRef("modalRef");
         >
         <div class="flex flex-col gap-4">
             <Input
+                data-cy="name"
                 label="Name*"
                 v-model="state.name"
                 :rules="nameRules"
@@ -116,6 +117,7 @@ const modalRef = useTemplateRef("modalRef");
                     Cancel
                 </Button>
                 <Button
+                    data-cy="yes"
                     variant="primary"
                     text-style="mono"
                     class="grow"
