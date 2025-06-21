@@ -7,12 +7,15 @@ import {
     LucidePencil,
     LucideTrash2,
     LucideChevronDown,
-    LucideChevronUp,
+    LucideChevronUp, LucideArrowLeft,
 } from "lucide-vue-next";
 
 const route = useRoute();
 const commit = ref<Commit | null>(null);
 const expandedFiles = ref<Record<string, boolean>>({});
+const username = route.params.username as string;
+const name = route.params.name as string;
+const branch = route.params.branch as string;
 
 const fetchCommit = async () => {
     const { owner, repo, sha } = route.params;
@@ -29,7 +32,14 @@ onMounted(fetchCommit);
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div v-if="commit" class="space-y-8 px-6 py-4 w-full max-w-none">
+        <!-- Top Controls -->
+        <div class="mb-5">
+            <router-link :to="{ name: 'Commits', params: { owner: username, repo: name, branch: branch } }">
+                <LucideArrowLeft />
+            </router-link>
+        </div>
+
+        <div v-if="commit" class="space-y-4 py-4 w-full max-w-none">
 
             <!-- Commit Description Styled Like a Page Title -->
             <div class="mb-6">
@@ -65,9 +75,21 @@ onMounted(fetchCommit);
                 <!-- File Header -->
                 <div class="flex items-start justify-between gap-4">
                     <div class="flex items-center gap-3">
-                        <LucideFilePlus2 v-if="file.status === 'added'" class="text-green-500" />
-                        <LucidePencil v-else-if="file.status === 'modified'" class="text-yellow-500" />
-                        <LucideTrash2 v-else-if="file.status === 'removed' || file.status === 'deleted'" class="text-red-500" />
+                        <LucideFilePlus2
+                            v-if="file.status === 'added'"
+                            :size="15"
+                            class="text-green-500 w-[20px] h-[20px]] flex-shrink-0"
+                        />
+                        <LucidePencil
+                            v-else-if="file.status === 'modified'"
+                            :size="15"
+                            class="text-yellow-500 w-[20px] h-[20px] flex-shrink-0"
+                        />
+                        <LucideTrash2
+                            v-else-if="file.status === 'removed' || file.status === 'deleted'"
+                            :size="15"
+                            class="text-red-500 w-[20px] h-[20px] flex-shrink-0"
+                        />
                         <span class="font-mono text-sm break-all">{{ file.filename }}</span>
                     </div>
                     <div class="shrink-0 ml-auto">

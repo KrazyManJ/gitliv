@@ -7,6 +7,9 @@ import type PullRequestFile from "@/model/PullRequestFile";
 import { LucideFilePlus2, LucidePencil, LucideTrash2, LucideChevronDown, LucideChevronUp } from "lucide-vue-next";
 import CommitComponent from "@/components/Commits.vue";
 import { useGithubStore } from "@/stores/github.ts";
+import CloneModal from "@/views/modal/CloneModal.vue";
+import MyButton from "@/components/Button.vue";
+import Loading from "@/components/LoadingTile.vue";
 
 const route = useRoute();
 const router = useRouter();
@@ -72,8 +75,8 @@ onMounted(fetchPullRequestData);
 
 <template>
     <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div v-if="isLoading" class="text-center py-10">Loading pull request details...</div>
-        <div v-else-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
+
+        <div v-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
 
         <div v-else>
             <!-- Pull Request Header -->
@@ -81,14 +84,14 @@ onMounted(fetchPullRequestData);
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
                     {{ pullRequest?.title }}
                 </h1>
-                <button
+                <MyButton
                     v-if="pullRequest?.state === 'open'"
+                    variant="primary"
                     @click="mergePullRequest"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded"
                     :disabled="mergeStatus === 'loading'"
                 >
                     {{ mergeStatus === 'loading' ? 'Merging...' : 'Merge' }}
-                </button>
+                </MyButton>
             </div>
 
             <!-- Notification Message -->
@@ -113,7 +116,14 @@ onMounted(fetchPullRequestData);
                 <div
                     class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden max-h-[70vh] overflow-auto"
                 >
-                    <ul class="divide-y divide-zinc-200 dark:divide-zinc-700">
+                    <div v-if="isLoading" class="space-y-6 p-6">
+                        <Loading
+                            v-for="n in 5"
+                            :key="'commit-loading-' + n"
+                            class="h-[96px] w-full rounded-lg shadow-sm border"
+                        />
+                    </div>
+                    <ul v-else class="divide-y divide-zinc-200 dark:divide-zinc-700">
                         <li v-for="commit in commits" :key="commit.sha" class="p-6">
                             <CommitComponent :commit="commit" :repo-name="repo" />
                         </li>
@@ -125,41 +135,53 @@ onMounted(fetchPullRequestData);
             <section>
                 <h2 class="text-xl font-semibold mb-4">Files changed ({{ files.length }})</h2>
                 <div class="space-y-4">
-                    <div
-                        v-for="file in files"
-                        :key="file.filename"
-                        @click="toggleFile(file.filename)"
-                        class="cursor-pointer p-4 rounded-lg border shadow-sm bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 transition hover:ring-1 hover:ring-blue-400"
-                    >
-                        <!-- File Header -->
-                        <div class="flex items-start justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <LucideFilePlus2 v-if="file.status === 'added'" class="text-green-500" />
-                                <LucidePencil v-else-if="file.status === 'modified'" class="text-yellow-500" />
-                                <LucideTrash2 v-else-if="file.status === 'removed' || file.status === 'deleted'" class="text-red-500" />
-                                <span class="font-mono text-sm break-all">{{ file.filename }}</span>
-                            </div>
-                            <div class="shrink-0 ml-auto">
-                                <LucideChevronDown v-if="!expandedFiles[file.filename]" />
-                                <LucideChevronUp v-else />
-                            </div>
-                        </div>
-
-                        <!-- File Patch -->
+                    <div v-if="isLoading" class="space-y-4">
+                        <Loading
+                            v-for="n in 3"
+                            :key="'file-loading-' + n"
+                            class="h-[60px] w-full rounded-lg shadow-sm border"
+                        />
+                    </div>
+                    <div v-else>
                         <div
-                            v-if="expandedFiles[file.filename]"
-                            class="overflow-x-auto whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded p-3 mt-3 text-sm font-mono space-y-1"
+                            v-for="file in files"
+                            :key="file.filename"
+                            @click="toggleFile(file.filename)"
+                            class="cursor-pointer p-4 rounded-lg border shadow-sm bg-white dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 transition hover:ring-1 hover:ring-blue-400"
                         >
+                            <!-- File Header -->
+                            <div class="flex items-start justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <LucideFilePlus2 v-if="file.status === 'added'" class="text-green-500" />
+                                    <LucidePencil v-else-if="file.status === 'modified'" class="text-yellow-500" />
+                                    <LucideTrash2
+                                        v-else-if="file.status === 'removed' || file.status === 'deleted'"
+                                        class="text-red-500"
+                                    />
+                                    <span class="font-mono text-sm break-all">{{ file.filename }}</span>
+                                </div>
+                                <div class="shrink-0 ml-auto">
+                                    <LucideChevronDown v-if="!expandedFiles[file.filename]" />
+                                    <LucideChevronUp v-else />
+                                </div>
+                            </div>
+
+                            <!-- File Patch -->
                             <div
-                                v-for="(line, index) in (file.patch?.split('\n') || ['No diff available'])"
-                                :key="index"
-                                :class="{
-                  'text-green-600 bg-green-100 dark:bg-green-900/30': line.startsWith('+') && !line.startsWith('+++'),
-                  'text-red-600 bg-red-100 dark:bg-red-900/30': line.startsWith('-') && !line.startsWith('---'),
-                  'text-gray-500': line.startsWith('@@'),
-                }"
+                                v-if="expandedFiles[file.filename]"
+                                class="overflow-x-auto whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-700 rounded p-3 mt-3 text-sm font-mono space-y-1"
                             >
-                                {{ line }}
+                                <div
+                                    v-for="(line, index) in (file.patch?.split('\n') || ['No diff available'])"
+                                    :key="index"
+                                    :class="{
+                    'text-green-600 bg-green-100 dark:bg-green-900/30': line.startsWith('+') && !line.startsWith('+++'),
+                    'text-red-600 bg-red-100 dark:bg-red-900/30': line.startsWith('-') && !line.startsWith('---'),
+                    'text-gray-500': line.startsWith('@@'),
+                  }"
+                                >
+                                    {{ line }}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,3 +190,4 @@ onMounted(fetchPullRequestData);
         </div>
     </main>
 </template>
+
