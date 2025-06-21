@@ -27,7 +27,7 @@ const state = reactive<{
 
 <template>
     <main class="p-8 flex flex-col gap-8">
-        <button @click="showModal(CreateEditRepositoryModal,{})">
+        <button @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})">
             <LucidePlus/>
         </button>
         <GithubLanguageStats/>
