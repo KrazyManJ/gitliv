@@ -66,7 +66,7 @@ onMounted(() => {
                     {{ branch }}
                 </div>
             </div>
-            <highlightjs autodetect :code="fileContent" />
+            <highlightjs autodetect :code="fileContent"/>
         </div>
     </main>
 </template>

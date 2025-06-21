@@ -4,7 +4,14 @@ import { useRoute, useRouter } from "vue-router";
 import type PullRequest from "@/model/PullRequest";
 import type Commit from "@/model/Commit";
 import type PullRequestFile from "@/model/PullRequestFile";
-import { LucideFilePlus2, LucidePencil, LucideTrash2, LucideChevronDown, LucideChevronUp } from "lucide-vue-next";
+import {
+    LucideFilePlus2,
+    LucidePencil,
+    LucideTrash2,
+    LucideChevronDown,
+    LucideChevronUp,
+    LucideArrowLeft
+} from "lucide-vue-next";
 import CommitComponent from "@/components/Commits.vue";
 import { useGithubStore } from "@/stores/github.ts";
 
@@ -76,6 +83,11 @@ onMounted(fetchPullRequestData);
         <div v-else-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
 
         <div v-else>
+            <div class="mb-5">
+                <router-link :to="{ name: 'Pull Requests', params: { owner:owner, repo:repo, branch:'main' }}">
+                    <LucideArrowLeft />
+                </router-link>
+            </div>
             <!-- Pull Request Header -->
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
