@@ -8,6 +8,7 @@ import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
 import { onMounted, reactive } from "vue";
 import DeleteRepositoryModal from "./modal/DeleteRepositoryModal.vue";
 import Input from "@/components/Input.vue";
+import GithubLanguageStats from "@/components/GithubLanguageStats.vue";
 
 const { repos,fetchRepos } = useGithubStore();
 
@@ -30,6 +31,7 @@ const state = reactive<{
         <button @click="showModal(CreateEditRepositoryModal,{})">
             <LucidePlus></LucidePlus>
         </button>
+        <GithubLanguageStats/>
         <Input v-model="state.searchInput" placeholder="Search..." />
         <div class="grid grid-cols-3 gap-8">
             <Repository

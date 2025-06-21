@@ -91,7 +91,10 @@ const modalRef = useTemplateRef("modalRef");
                 :rules="nameRules"
                 ref="modalRef"
             />
-            <Input label="Description" v-model="state.description" />
+            <Input
+                label="Description" v-model="state.description"
+                placeholder="No description provided..."
+            />
             <Select
                 label="Visibility"
                 v-model="state.visibility"
