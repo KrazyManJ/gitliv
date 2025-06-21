@@ -46,6 +46,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                 ref="rightSide"
             >
                 <div
+                    data-cy="dropDown"
                     class="flex items-center gap-2"
                     ref="button"
                     @click="() => menuOpened = !menuOpened"

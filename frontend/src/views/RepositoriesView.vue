@@ -27,14 +27,15 @@ const state = reactive<{
 
 <template>
     <main class="p-8 flex flex-col gap-8">
-        <button @click="showModal(CreateEditRepositoryModal,{})">
+        <button data-cy="add" @click="showModal(CreateEditRepositoryModal,{})">
             <LucidePlus></LucidePlus>
         </button>
         <GithubLanguageStats/>
         <Input v-model="state.searchInput" placeholder="Search..." />
-        <div class="grid grid-cols-3 gap-8">
-            <Repository data-cy="repository"
-                        v-for="repo in repos.filter(repo => repo.name.toLocaleLowerCase().includes(state.searchInput.toLocaleLowerCase()))"
+        <div data-cy="repositories" class="grid grid-cols-3 gap-8">
+            <Repository
+                data-cy="repository"
+                v-for="repo in repos.filter(repo => repo.name.toLocaleLowerCase().includes(state.searchInput.toLocaleLowerCase()))"
                 :key="repo.id"
                 :repo="repo"
                 @edit-button-click="(repo) => showModal(CreateEditRepositoryModal,{repo: repo.name}, {onHide: fetchRepos})"

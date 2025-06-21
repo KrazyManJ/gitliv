@@ -14,6 +14,7 @@
 
 
 import Cookies from "js-cookie";
+import {setBearerAuthToken} from "../../src/api";
 const TOKEN_COOKIE_NAME = "auth_token";
 
 describe('All test, ready?', () => {
@@ -25,16 +26,34 @@ describe('All test, ready?', () => {
         cy.visit('/')
         cy.window().then(() => {
             Cookies.set(TOKEN_COOKIE_NAME, token)
+            setBearerAuthToken(token)
         })
         cy.get('[data-cy="login"]').click()
+        cy.visit('/repositories')
+        cy.get('[data-cy="repositories"]')
     });
 
-    // afterEach(() => {
-    //     cy.get('[data-cy="logout"]').click()
-    // })
-
-    it('Add repository', () => {
-        cy.visit('/repositories')
-        cy.get('[data-cy="repository"]').click()
+    afterEach(() => {
+        try {
+            cy.get('[data-cy="dropDown"]').click()
+            cy.get('[data-cy="logout"]').click()
+            cy.get('h1').contains("GitLiv")
+        }catch (e){
+            console.log(e)
+        }
     })
+
+    it('Change theme to dark mode', () => {
+        cy.get('[data-cy="dropDown"]').click()
+        cy.get('[data-cy="dark"]').click()
+        cy.get('[data-cy="dropDown"]').click()
+    })
+
+    // it('Add repository', () => {
+    //     cy.visit('/repositories')
+    //     cy.get('[data-cy="add"]').click()
+    //     cy.get('[data-cy="name"]').find('input').type("Hello")
+    //     console.log(Cookies.get(TOKEN_COOKIE_NAME) || "")
+    //     cy.get('[data-cy="yes"]').click()
+    // })
 })

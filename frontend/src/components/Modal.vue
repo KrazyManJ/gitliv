@@ -2,7 +2,7 @@
 
 import { useModalStore } from '@/stores/modal'
 import Tile from './Tile.vue';
-import { computed, reactive, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 const { state, hideModal } = useModalStore()
 
 const handleModalOutsideClick = (event: MouseEvent) => {
@@ -42,6 +42,7 @@ watch(() => state.isVisible, (visible) => {
 <template>
     <Transition name="fade">
         <div
+            data-cy="blur"
             v-if="state.isVisible"
             class="fixed inset-0 flex items-center justify-center z-50 bg-zinc-900/15 backdrop-blur-xs p-4"
             @click="handleModalOutsideClick"
