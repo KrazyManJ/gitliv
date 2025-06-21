@@ -46,6 +46,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                 ref="rightSide"
             >
                 <div
+                    data-cy="dropDown"
                     class="flex items-center gap-2"
                     ref="button"
                     @click="() => menuOpened = !menuOpened"
@@ -71,6 +72,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                     <Tile class="p-0 shadow-xl overflow-hidden">
                         <ThemePicker class="dark:not-last:border-b-zinc-700 not-last:border-b-zinc-200 not-last:border-b-1"/>
                         <div
+                            data-cy="logout"
                             v-if="authStore.user"
                             @click="logout"
                             class="flex p-2 gap-3 px-4 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"

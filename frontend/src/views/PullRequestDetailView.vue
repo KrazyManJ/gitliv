@@ -93,6 +93,11 @@ onMounted(fetchPullRequestData);
         <div v-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
 
         <div v-else>
+            <div class="mb-5">
+                <router-link :to="{ name: 'Pull Requests', params: { owner:owner, repo:repo, branch:'main' }}">
+                    <LucideArrowLeft />
+                </router-link>
+            </div>
             <!-- Pull Request Header -->
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
