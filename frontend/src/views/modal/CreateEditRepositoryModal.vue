@@ -1,41 +1,45 @@
 <script setup lang="ts">
 import { api } from "@/api";
+import Button from "@/components/Button.vue";
 import Input, { type Rule } from "@/components/Input.vue";
 import Select from "@/components/Select.vue";
 import type Repo from "@/model/Repo";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import { useModalStore } from "@/stores/modal";
+import { LucideSave, LucideX } from "lucide-vue-next";
 import { computed, onMounted, reactive, useTemplateRef } from "vue";
 
-type RepositoryVisibility = "public" | "private" | ""
+type RepositoryVisibility = "public" | "private"
 
-const formData = reactive<{
+const state = reactive<{
     name: string
     description: string,
     visibility: RepositoryVisibility,
     initWithReadme: boolean,
+    loading: boolean
 }>({
     name: "",
     description: "",
-    visibility: "",
-    initWithReadme: false
+    visibility: "public",
+    initWithReadme: false,
+    loading: true
 });
 
-const {user} = useGithubAuthStore()
+const { user } = useGithubAuthStore()
 const { hideModal } = useModalStore()
 
 const submit = async () => {
     if (isInputValid.value) return
 
     const body = {
-        name: formData.name,
-        description: formData.description.length === 0 ? undefined : formData.description,
-        private: formData.visibility === "private",
-        auto_init: formData.initWithReadme
+        name: state.name,
+        description: state.description.length === 0 ? undefined : state.description,
+        private: state.visibility === "private",
+        auto_init: state.initWithReadme
     }
 
-    if (routeRepo){
-        await api.patch(`repos/${user?.username}/${routeRepo}`, body)
+    if (repo){
+        await api.patch(`repos/${user?.username}/${repo}`, body)
     }
     else {
         await api.post(`user/repos`, body);
@@ -44,26 +48,27 @@ const submit = async () => {
     hideModal()
 };
 
-const isInputValid = computed(() => !nameRules.every(rule => rule(formData.name) === true && formData.visibility !== ""))
+const isInputValid = computed(() => !nameRules.every(rule => rule(state.name) === true))
 
 const nameRules: Rule[] = [
     (v) => !!v || 'Required',
     (v) => /^[a-z0-9\-\.\_]+$/i.test(v as string) || 'The repository name can only contain ASCII letters, digits, and the characters ., -, and _.',
 ]
 
-const props = defineProps<{
+const { repo } = defineProps<{
     repo?: string
 }>()
 
-const routeRepo = props.repo
 
-onMounted(() => {
-    if (!routeRepo) return;
-    api.get<Repo>(`/repos/${user?.username}/${routeRepo}`).then(({data: repo}) => {
-        formData.name = repo.name
-        formData.description = repo.description
-        formData.visibility = repo.visibility
-    });
+onMounted(async () => {
+    if (repo) {
+        await api.get<Repo>(`/repos/${user?.username}/${repo}`).then(({data: repo}) => {
+            state.name = repo.name
+            state.description = repo.description
+            state.visibility = repo.visibility
+        });
+    }
+    state.loading = false;
     (document.activeElement as HTMLElement).blur();
     (modalRef.value?.$refs.input as HTMLInputElement).focus()
 })
@@ -74,7 +79,7 @@ const modalRef = useTemplateRef("modalRef");
 
 <template>
     <div class="">
-        <h1 class="text-3xl text-center">{{ routeRepo ? "Edit" : "Create" }} a Repository</h1>
+        <h1 class="text-3xl text-center">{{ repo ? "Edit" : "Create" }} a Repository</h1>
         <form
             class="flex flex-col gap-12"
             @submit.prevent="submit"
@@ -82,23 +87,47 @@ const modalRef = useTemplateRef("modalRef");
         <div class="flex flex-col gap-4">
             <Input
                 label="Name*"
-                v-model="formData.name"
+                v-model="state.name"
                 :rules="nameRules"
                 ref="modalRef"
             />
-            <Input label="Description" v-model="formData.description" />
+            <Input
+                label="Description" v-model="state.description"
+                placeholder="No description provided..."
+            />
             <Select
-            label="Visibility"
-            v-model="formData.visibility"
-            :options="{
+                label="Visibility"
+                v-model="state.visibility"
+                :options="{
                     public: 'Public',
                     private: 'Private',
                 }"
-                blank-label="Select a visibility"
-                />
-                <Input v-if="!routeRepo" label="Initialize with README.md file" v-model="formData.initWithReadme" type="checkbox"/>
+                :default-value="state.visibility"
+            />
+            <Input v-if="!repo" label="Initialize with README.md file" v-model="state.initWithReadme" type="checkbox"/>
             </div>
-            <input type="submit" class="bg-primary p-2 rounded-lg text-zinc-100 font-mono font-bold disabled:opacity-50 cursor-pointer hover:brightness-110 disabled:cursor-not-allowed" :disabled="isInputValid">
+            <div class="flex justify-evenly px-8 gap-16">
+                <Button
+                    text-style="mono"
+                    class="grow"
+                    @click="hideModal"
+                >
+                    <LucideX :size="20" class="stroke-zinc-100"/>
+                    Cancel
+                </Button>
+                <Button
+                    variant="primary"
+                    text-style="mono"
+                    class="grow"
+                    :disabled="isInputValid"
+                    @click="submit"
+                    :loading="state.loading"
+                    type="submit"
+                >
+                    <LucideSave :size="20" class="stroke-zinc-100"/>
+                    {{ !repo ? "Create" : "Update" }}
+                </Button>
+            </div>
         </form>
     </div>
 </template>

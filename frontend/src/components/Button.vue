@@ -16,12 +16,12 @@ const {
     <button
         :class='[
             `
-                rounded-lg p-2 px-4 text-center transition-transform cursor-pointer flex items-center justify-center relative
-                hover:brightness-110
+                rounded-lg p-2 px-4 text-center transition-[filter] cursor-pointer flex items-center justify-center relative
+                enabled:hover:brightness-110
                 disabled:cursor-not-allowed disabled:opacity-50
             `,
             {
-                "bg-zinc-10": variant === "normal",
+                "bg-zinc-600": variant === "normal",
                 "bg-primary": variant === "primary",
                 "bg-red-700": variant === "important"
             },
@@ -30,6 +30,7 @@ const {
                 "": textStyle === "normal"
             }
         ]'
+        type="button"
         v-tw-merge
     >
         <div :class='["text-zinc-50 flex items-center justify-center gap-2",{

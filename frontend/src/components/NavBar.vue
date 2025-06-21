@@ -13,7 +13,7 @@ import { LucideLogOut } from 'lucide-vue-next';
     }
 </script>
 <template>
-    <div class="max-w-7xl mx-auto p-4">
+    <div class="max-w-7xl mx-auto p-4" v-tw-merge>
         <div class="flex items-center">
             <RouterLink to="/">
                 <div class="flex items-center gap-4">
@@ -24,9 +24,9 @@ import { LucideLogOut } from 'lucide-vue-next';
             <div class="grow"></div>
             <div>
                 <div v-if="authStore.user" class="flex items-center gap-4">
-                    <div>{{ authStore.user.username }}</div>
+                    <span class="font-mono font-light">{{ authStore.user.username }}</span>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
-                    <LucideLogOut class="stroke-red-500" @click="logout"/>
+                    <LucideLogOut class="stroke-red-500 cursor-pointer hover:stroke-red-400 transition-colors" @click="logout"/>
                 </div>
                 <div v-else-if="$route.path!=='/'" class="flex items-center gap-4">
                     <LoadingTile class="w-16 h-2 rounded"/>
