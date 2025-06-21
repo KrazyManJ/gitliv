@@ -38,7 +38,7 @@ onMounted(() => {
                 v-bind="$attrs"
                 v-model="model"
                 :class='[
-                    "bg-zinc-100 border-zinc-400 appearance-none w-full rounded p-1 px-2 border  focus-visible:outline-1",
+                    "bg-zinc-100 border-zinc-400 appearance-none w-full rounded p-1 px-2 border  focus-visible:outline-1 pr-8",
                     "dark:bg-zinc-900 dark:border-zinc-700 dark:focus-visible:outline-zinc-500",
                     {"text-zinc-500": model === ""}
                 ]'

@@ -3,19 +3,25 @@
 @import "./tailwind.css";
 
 @layer theme {
-    #app {
+    body {
+        @import 'highlight.js/styles/github.css';
         @apply bg-zinc-100;
     }
 
-    * {
+    *
+    :not(.hljs, .hljs *)
+    {
         @apply text-zinc-900;
     }
 
-    #app.dark {
+    body.dark {
         @apply bg-zinc-900;
     }
 
-    #app.dark * {
+    body.dark *
+    :not(.hljs, .hljs *)
+    {
+        @import 'highlight.js/styles/github-dark.css';
         @apply text-zinc-100;
     }
 }

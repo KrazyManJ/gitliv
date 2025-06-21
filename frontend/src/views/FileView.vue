@@ -8,6 +8,7 @@ const store = useGithubStore();
 const { fetchFile, fileData } = store;
 const { isLoading } = storeToRefs(store);
 
+
 const props = defineProps<{
     file: string;
     sha: string;
@@ -19,6 +20,10 @@ const props = defineProps<{
 const { file, sha, username, name, branch } = props;
 
 const fileContent = ref("");
+
+const convertFileContent = (content?: string) => {
+    fileContent.value = content ? decodeBase64(content) : "";
+};
 
 const decodeBase64 = (base64: string) => {
     const binaryString = atob(base64);

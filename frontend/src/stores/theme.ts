@@ -1,12 +1,12 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 
-type Theme = "dark" | "light" | "system";
+export type Theme = "dark" | "light" | "system";
 
 const THEME_STORAGE_KEY = "theme";
 
 export const initializeTheme = () => {
-    (document.getElementById("app") as HTMLElement).classList.toggle(
+    (document.body as HTMLElement).classList.toggle(
         "dark",
         localStorage.theme === "dark" ||
             (!(THEME_STORAGE_KEY in localStorage) &&
@@ -46,7 +46,7 @@ export const useThemeStore = defineStore("theme", () => {
     });
 
     const updateClass = () => {
-        const element = document.getElementById("app");
+        const element = document.body;
         if (!element) return;
         element.classList.toggle("dark", isDark.value);
     };
