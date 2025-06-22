@@ -3,14 +3,16 @@ import { onMounted, ref, watch, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useGithubStore } from "@/stores/github.ts";
 import File from "@/components/File.vue";
-import { LucideCornerLeftUp } from "lucide-vue-next";
+import { LucideCornerLeftUp, LucideGitBranch } from "lucide-vue-next";
 import { useRoute, useRouter } from "vue-router";
-import Loading from "@/components/LoadingTile.vue";
+import LoadingTile from "@/components/LoadingTile.vue";
 import Select from "@/components/Select.vue";
 import type Branch from "@/model/Branch.ts";
+import RepositoryDetails from "@/components/RepositoryDetails.vue";
+import Tile from "@/components/Tile.vue";
 
 const store = useGithubStore();
-const { fetchFilesFromRepo, fetchBranchesFromRepo, resolvePathToTreeSha } = store;
+const { fetchFilesFromRepo, fetchBranchesFromRepo, resolvePathToTreeSha, fetchRepo, repoData } = store;
 const { isLoadingFiles, hasLoadedOnce, files, branches } = storeToRefs(store);
 
 const route = useRoute();
@@ -27,13 +29,13 @@ const path = computed(() => {
 
 const selectedBranch = ref("");
 
-const goUp = () => {
+const goUp = computed(() => {
     const currentPath = path.value;
     const segments = currentPath.split("/").filter(Boolean);
     segments.pop();
     const newPath = segments.join("/");
 
-    router.push({
+    return {
         name: "Repository",
         params: {
             username: username.value,
@@ -41,8 +43,8 @@ const goUp = () => {
             branch: branch.value,
             pathMatch: newPath || undefined,
         },
-    });
-};
+    }
+})
 
 const changeBranch = () => {
     router.push({
@@ -59,6 +61,7 @@ const changeBranch = () => {
 onMounted(() => {
     selectedBranch.value = branch.value;
     fetchBranchesFromRepo(username.value, name.value);
+    if (!repoData.current) fetchRepo(username.value, name.value)
 });
 
 watch(
@@ -89,11 +92,12 @@ const branchOptions = computed(() =>
 </script>
 
 <template>
-    <main class="p-8 min-h-screen">
+    <main class="p-4">
+        <RepositoryDetails :repo="repoData.current"/>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-                Source <span class="text-primary text-2xl ml-2 break-words">{{ username }}/{{ name }}</span>
+            <h1 class="text-2xl font-bold">
+                Source
             </h1>
             <Select
                 v-model="selectedBranch"
@@ -102,26 +106,21 @@ const branchOptions = computed(() =>
                 blankLabel="Choose a branch"
                 @change="changeBranch"
                 class="max-w-[200px]"
+                :icon="LucideGitBranch"
             />
         </div>
 
-        <div
-            class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden px-6 py-4 space-y-4"
-        >
-
-            <div v-if="path" class="mb-2">
-                <button @click="goUp">
-                    <LucideCornerLeftUp />
-                </button>
+        <Tile class="p-0 overflow-hidden">
+            <div v-if="path" class="p-3 gap-3 flex items-center not-last:border-b-1 dark:not-last:border-zinc-700 not-last:border-zinc-300 text-sm ">
+                <LucideCornerLeftUp :size="20"/>
+                <RouterLink :to="goUp" class="font-mono hover:text-primary hover:dark:text-primary-light hover:underline">...</RouterLink>
+            </div>
+            <div v-if="isLoadingFiles || (files.length === 0 && !hasLoadedOnce)">
+                <LoadingTile v-for="i in 10" :key="i" :style="`animation-delay: ${i*200}ms`" class="h-[48px] rounded-none not-last:border-b-1 dark:not-last:border-zinc-600 not-last:border-zinc-400/50" />
             </div>
 
-
-            <div v-if="isLoadingFiles || (files.length === 0 && !hasLoadedOnce)" class="space-y-4">
-                <Loading v-for="i in 8" :key="i" class="h-[48px] w-full rounded-lg shadow-sm border" />
-            </div>
-
-            <div v-else-if="hasLoadedOnce && files.length === 0" class="text-center text-gray-500">
-                This folder is empty.
+            <div v-else-if="hasLoadedOnce && files.length === 0" class="text-center text-zinc-500 p-4">
+                This folder is empty...
             </div>
 
             <div v-else class="flex flex-col">
@@ -135,6 +134,11 @@ const branchOptions = computed(() =>
                     :branch="selectedBranch || 'main'"
                 />
             </div>
-        </div>
+        </Tile>
+
+
+
+
+
     </main>
 </template>

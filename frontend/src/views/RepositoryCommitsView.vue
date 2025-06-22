@@ -112,7 +112,7 @@ watch(filteredCommits, async (newVal) => {
 
 
 <template>
-    <main class="p-8">
+    <main class="p-4">
         <RepositoryDetails :repo="repoData.current"/>
 
         <HorizontalRule/>
@@ -158,7 +158,7 @@ watch(filteredCommits, async (newVal) => {
 
         <!-- Header with Branch & Repo -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h2 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h2 class="text-2xl font-bold">
                 Commits
             </h2>
             <BranchSelect

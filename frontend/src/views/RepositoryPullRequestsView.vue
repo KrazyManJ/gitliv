@@ -55,14 +55,15 @@ function openPullRequestModal() {
 
 <template>
     <main
-        class="p-8"
+        class="p-4"
     >
+        <h1 class="text-4xl text-primary font-bold mb-8" data-cy="repo-heading">{{owner}}/{{ repo }}</h1>
         <div
             class="flex flex-col md:flex-row md:items-center justify-between mb-6"
         >
-            <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
+            <h2 class="text-2xl font-bold">
                 Pull Requests
-            </h1>
+            </h2>
 
             <div class="mt-3 md:mt-0 self-start md:self-auto">
                 <MyButton variant="primary" @click="openPullRequestModal" data-cy="new-pr-button">

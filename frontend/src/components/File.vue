@@ -33,39 +33,36 @@ const openFolder = (treePath: string | undefined) => {
         });
     }
 };
+
+const linkData = computed(() => {
+    const params = {
+        name: props.name,
+        username: props.username,
+        branch: props.branch
+    } as Record<string,string>
+    const path = currentPath.value ? `${currentPath.value}/${props.file.path}` : props.file.path
+    if (isFolder){
+        params["pathMatch"] = path
+    }
+    else {
+        params["file"] = path
+        params["sha"] = props.file.sha
+    }
+
+    return {
+        name: isFolder ? 'Repository' : 'File',
+        params
+    }
+})
+
 </script>
 
 <template>
-    <div class="group block">
-        <button
-            v-if="isFolder"
-            @click="openFolder(file.url.split('/').pop())"
-            class="w-full flex items-center gap-4 p-4 rounded-lg border shadow-sm transition hover:brightness-105 bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 no-underline"
-        >
-            <LucideFolder class="w-6 h-6 text-zinc-600 dark:text-zinc-300 flex-shrink-0" />
-            <span class="text-sm font-mono text-zinc-800 dark:text-white truncate">
-                {{ file.path }}
-            </span>
-        </button>
-
-        <RouterLink
-            v-else
-            :to="{
-                name: 'File',
-                params: {
-                    file: currentPath ? `${currentPath}/${file.path}` : file.path,
-                    name: name,
-                    username: username,
-                    branch: branch,
-                    sha: file.sha
-                }
-            }"
-            class="w-full flex items-center gap-4 p-4 rounded-lg border shadow-sm transition hover:brightness-105 bg-zinc-50 dark:bg-zinc-800 border-zinc-300 dark:border-zinc-700 no-underline"
-        >
-            <LucideFile class="w-6 h-6 text-zinc-600 dark:text-zinc-300 flex-shrink-0" />
-            <span class="text-sm font-mono text-zinc-800 dark:text-white truncate">
-                {{ file.path }}
-            </span>
-        </RouterLink>
+    <div class="
+        flex items-center font-mono p-3 gap-3
+        not-last:border-b-1 dark:not-last:border-zinc-700 not-last:border-zinc-300 text-sm ">
+        <LucideFolder :size="20" v-if="isFolder"/>
+        <LucideFile :size="20" v-else/>
+        <RouterLink :to="linkData" class="hover:text-primary hover:dark:text-primary-light hover:underline">{{ file.path }}</RouterLink>
     </div>
 </template>

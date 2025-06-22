@@ -25,3 +25,7 @@
         @apply text-zinc-100;
     }
 }
+
+pre code.hljs {
+    @apply p-4 grow
+}

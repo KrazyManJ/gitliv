@@ -17,7 +17,7 @@ const expandedFiles = ref<Record<string, boolean>>({});
 
 const fetchCommit = async () => {
     const { owner, repo, sha } = route.params;
-    const res = api.get(`https://api.github.com/repos/${owner}/${repo}/commits/${sha}`);
+    const res = api.get(`/repos/${owner}/${repo}/commits/${sha}`);
     commit.value = (await res).data;
 };
 

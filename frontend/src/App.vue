@@ -24,10 +24,10 @@ onMounted(() => {
 </script>
 
 <template>
-    <div class="min-h-screen">
-        <NavBar :class="{ 'pointer-events-none': state.isVisible }"/>
-        <div :class="{ 'pointer-events-none': state.isVisible }" class="max-w-7xl mx-auto">
-            <RouterView />
+    <div class="min-h-screen flex flex-col">
+        <NavBar :class="{ 'pointer-events-none': state.isVisible }" class="w-full"/>
+        <div :class="{ 'pointer-events-none': state.isVisible }" class="max-w-7xl mx-auto w-full flex flex-col grow">
+            <RouterView class="w-full" />
         </div>
         <Modal/>
         <div class="fixed inset-0 z-50 flex pointer-events-none flex-col items-center gap-4 p-2">

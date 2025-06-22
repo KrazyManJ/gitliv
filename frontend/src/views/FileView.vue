@@ -2,6 +2,9 @@
 import { useGithubStore } from "@/stores/github.ts";
 import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
+import Tile from "@/components/Tile.vue";
+import { LucideFile, LucideGitBranch } from "lucide-vue-next";
+import LoadingTile from "@/components/LoadingTile.vue";
 
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
@@ -40,26 +43,23 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="p-8 min-h-screen">
-        <!-- Loading -->
-        <div v-if="isLoading" class="space-y-4">
-            <div class="w-64 h-8 bg-zinc-300 dark:bg-zinc-700 rounded-lg animate-pulse" />
-            <div class="h-80 bg-zinc-200 dark:bg-zinc-800 rounded-lg animate-pulse" />
-        </div>
-
-        <div v-else class="space-y-8 py-4">
-            <div class="mb-2 space-y-4">
-                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 break-all"  data-cy="file-title">{{ file }}</h1>
-                <p class="text-sm text-primary dark:text-primary font-mono">Branch: {{ branch }}</p>
+    <main class="p-4 flex flex-col grow">
+        <h1 class="text-4xl text-primary font-bold mb-8" data-cy="repo-heading">{{username}}/{{ name }}</h1>
+        <Tile class="p-0 overflow-hidden grow flex flex-col">
+            <div class="font-mono p-2 px-4 border-b-1 border-zinc-200 dark:border-zinc-700 flex items-center gap-2">
+                <LucideFile :size="16" class="shrink-0"/>
+                <div data-cy="file-title" class="break-words min-w-0 w-full text-sm">
+                    {{ file }}
+                </div>
+                <div class="grow" />
+                <LucideGitBranch :size="20" class="shrink-0 ml-4"/>
+                <span>{{ branch }}</span>
             </div>
-
-            <div
-                data-cy="file-content"
-                class="overflow-x-auto whitespace-pre-wrap bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded p-4 font-mono text-sm leading-relaxed"
-            >
-                <highlightjs autodetect :code="fileContent" />
+            <LoadingTile v-if="isLoading" class="rounded-none grow"/>
+            <div v-else class="flex flex-col grow" data-cy="file-content">
+                <highlightjs autodetect :code="fileContent" class="flex flex-col grow"/>
             </div>
-        </div>
+        </Tile>
     </main>
 </template>
 

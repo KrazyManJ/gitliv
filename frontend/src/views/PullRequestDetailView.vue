@@ -94,7 +94,8 @@ onMounted(fetchPullRequestData);
 </script>
 
 <template>
-    <main class="p-8">
+    <main class="p-4">
+        <h1 class="text-4xl text-primary font-bold mb-8" data-cy="repo-heading">{{owner}}/{{ repo }}</h1>
         <div>
             <!-- Pull Request Header -->
             <div class="flex justify-between items-center mb-4">

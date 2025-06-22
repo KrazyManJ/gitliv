@@ -68,7 +68,18 @@ export const useGithubStore = defineStore("github", () => {
         isLoadingFiles.value = true;
         try {
             const response = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`);
-            response.data.tree.forEach((file: GitFileFromTree) => files.push(file));
+            response.data.tree
+            .sort((a, b) => {
+                // First, folders before files
+                if (a.type === 'tree' && b.type !== 'tree') return -1;
+                if (a.type !== 'tree' && b.type === 'tree') return 1;
+
+                // Then, alphabetical by path
+                return a.path.localeCompare(b.path);
+            })
+            .forEach((file: GitFileFromTree) => {
+                files.push(file)
+            });
         } finally {
             isLoadingFiles.value = false;
         }
