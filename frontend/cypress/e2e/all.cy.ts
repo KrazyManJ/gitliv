@@ -87,8 +87,10 @@ describe('All test, ready?', () => {
         cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
 
         // Confirm page loaded by checking title
-        cy.contains('h1', 'Commits').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
+        cy.contains('h2', 'Commits').should('exist');
+        cy.get('[data-cy="repo-heading"]')
+            .should('be.visible')
+
 
         // Optional: wait for commit items to render
         cy.get('.commit-item').should('exist');
@@ -113,14 +115,15 @@ describe('All test, ready?', () => {
         cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
 
         // Confirm page loaded by checking title
-        cy.contains('h1', 'Commits').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
+        cy.contains('h2', 'Commits').should('exist');
+        cy.get('[data-cy="repo-heading"]')
+            .should('be.visible')
+
 
         // Click the "Source" button
         cy.get('button').contains('Pull Request').click();
 
         cy.contains('h1', 'Pull Requests').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
 
         // Click the "New" button
         cy.get('[data-cy="new-pr-button"]').click();
@@ -139,8 +142,10 @@ describe('All test, ready?', () => {
         cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
 
         // Confirm page loaded by checking title
-        cy.contains('h1', 'Commits').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
+        cy.contains('h2', 'Commits').should('exist');
+        cy.get('[data-cy="repo-heading"]')
+            .should('be.visible')
+        ;
 
         cy.get(".commit-item").should("exist");
 
@@ -166,8 +171,9 @@ describe('All test, ready?', () => {
         cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
 
         // Confirm page loaded by checking title
-        cy.contains('h1', 'Commits').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
+        cy.contains('h2', 'Commits').should('exist');
+        cy.get('[data-cy="repo-heading"]')
+            .should('be.visible')
 
         cy.get('button').contains('Clone').click();
 

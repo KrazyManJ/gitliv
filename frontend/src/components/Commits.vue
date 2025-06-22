@@ -25,7 +25,7 @@ const byLineMinWidth = 180;
 
 <template>
     <RouterLink
-        :to="`/repos/${commit.commit.author.name ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
+        :to="`/repos/${commit.author?.login ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
         class="block group no-underline"
     >
     <Tile variant="secondary" class="min-h-[96px]">
