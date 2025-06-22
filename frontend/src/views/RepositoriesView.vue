@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github";
 import Repository from "@/components/Repository.vue";
-import { LucidePlus, LucideSearch } from "lucide-vue-next";
+import { LucideBookPlus, LucidePlus, LucideSearch } from "lucide-vue-next";
 import { useModalStore } from "@/stores/modal";
 import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
 import { onMounted, reactive } from "vue";
 import DeleteRepositoryModal from "./modal/DeleteRepositoryModal.vue";
 import Input from "@/components/Input.vue";
 import GithubLanguageStats from "@/components/GithubLanguageStats.vue";
+import Button from "@/components/Button.vue";
 
 const { repos,fetchRepos } = useGithubStore();
 
@@ -27,11 +28,25 @@ const state = reactive<{
 
 <template>
     <main class="p-4 flex flex-col gap-8">
-        <button data-cy="add" @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})">
-            <LucidePlus/>
-        </button>
         <GithubLanguageStats/>
-        <Input v-model="state.searchInput" placeholder="Search..." data-cy="search" :icon="LucideSearch"/>
+        <div class="flex w-full gap-8 items-center">
+
+            <Input
+                v-model="state.searchInput"
+                placeholder="Search a repository..."
+                data-cy="search"
+                :icon="LucideSearch"
+                container-class="grow"
+                class="border-zinc-400/50"
+            />
+            <Button
+                variant="primary"
+                text-style="mono"
+                @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})"
+            >
+                <LucideBookPlus class="stroke-zinc-100"/> Create a Repository
+            </Button>
+        </div>
         <div data-cy="repositories" class="grid lg:grid-cols-3 gap-8 md:grid-cols-2 grid-cols-1">
             <Repository
                 data-cy="repository"

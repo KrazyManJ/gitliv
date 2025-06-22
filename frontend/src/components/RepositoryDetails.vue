@@ -55,8 +55,8 @@ const removeClick = () =>{
         <div class="flex mb-4 items-center">
             <h1 v-if="repo" class="text-4xl text-primary font-bold">{{repo.owner.login}}/{{ repo.name }}</h1>
             <LoadingTile v-else class="text-4xl font-bold">Owner/Repository</LoadingTile>
-            <div class="grow"/>
-            <div v-if="repo" class="flex gap-8">
+            <div class="grow md:block hidden"/>
+            <div v-if="repo" class="gap-8 md:flex hidden">
                 <LucidePencil @click="editClick"/>
                 <LucideTrash @click="removeClick"/>
             </div>
@@ -68,5 +68,10 @@ const removeClick = () =>{
         <LoadingTile v-if="!repo">Description not provided</LoadingTile>
         <p v-else-if="repo?.description">{{ repo.description }}</p>
         <p v-else><i>Description not provided</i></p>
+        <div v-if="repo" class="mt-8 md:hidden flex justify-end gap-16">
+            <LucidePencil @click="editClick"/>
+            <!-- <div class="grow"/> -->
+            <LucideTrash @click="removeClick"/>
+        </div>
     </div>
 </template>

@@ -5,10 +5,11 @@ import { ref, useAttrs, type FunctionalComponent } from 'vue';
 
 export type Rule = (v: unknown) => true | string
 
-const { label, rules, icon } = defineProps<{
+const { label, rules, icon, containerClass } = defineProps<{
     label?: string,
     rules?: Rule[],
     icon?: FunctionalComponent<LucideProps>
+    containerClass?: unknown
 }>()
 
 defineOptions({
@@ -39,7 +40,8 @@ const changeErrorState = async () => {
             {
                 "flex-col gap-1": !isCheckbox,
                 "gap-2 flex-row-reverse justify-end ml-3": isCheckbox
-            }
+            },
+            containerClass
         ]'
     >
         <span
@@ -56,7 +58,7 @@ const changeErrorState = async () => {
         >
             {{ label }}
         </span>
-        <div class="relative grow flex">
+        <div class="relative flex">
 
             <component v-if="icon" :is="icon" :size="20" class="absolute left-2 top-2 stroke-zinc-800 dark:stroke-zinc-200 "/>
             <input
@@ -80,8 +82,8 @@ const changeErrorState = async () => {
             @focusout="changeErrorState"
             @input="changeErrorState"
             >
+            <LucideCheck v-if="isCheckbox" class="absolute left-0.5 top-0.5 hidden peer-checked:block stroke-zinc-100" :size="16"/>
         </div>
-        <LucideCheck v-if="isCheckbox" class="absolute left-0.5 top-0.75 hidden peer-checked:block stroke-zinc-100" :size="16"/>
         <span v-if="errorMsg" class="text-xs ml-1 text-red-500">{{ errorMsg }}</span>
     </label>
 </template>
