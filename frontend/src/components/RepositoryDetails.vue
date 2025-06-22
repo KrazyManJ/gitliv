@@ -53,7 +53,7 @@ const removeClick = () =>{
 <template>
     <div class="mb-8">
         <div class="flex mb-4 items-center">
-            <h1 v-if="repo" class="text-4xl text-primary font-bold">{{repo.owner.login}}/{{ repo.name }}</h1>
+            <h1 v-if="repo" class="text-4xl text-primary font-bold" data-cy="repo-heading">{{repo.owner.login}}/{{ repo.name }}</h1>
             <LoadingTile v-else class="text-4xl font-bold">Owner/Repository</LoadingTile>
             <div class="grow md:block hidden"/>
             <div v-if="repo" class="gap-8 md:flex hidden">
