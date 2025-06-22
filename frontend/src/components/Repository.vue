@@ -62,15 +62,10 @@ onMounted(() => {
             </p>
             <p v-else class="italic">No description provided</p>
         </div>
-        <div class="flex">
+        <div class="flex mt-4">
             <div class="ml-2 flex gap-2 items-center">
                 <LanguageIcon v-for="(lang,i) in state.languages" :language="lang" :key="i" :size="20"/>
             </div>
-            <!-- <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
-                <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
-                <SimpleIcon :language="repo.language" :style="`fill: ${langColor};`"/>
-                <span>{{ repo.language }}</span>
-            </div> -->
             <div class="grow" />
             <div class="flex gap-4">
                 <button @click="() => emit('deleteButtonClick',repo)" class="cursor-pointer">
@@ -79,11 +74,6 @@ onMounted(() => {
                 <button @click="() => emit('editButtonClick',repo)" class="cursor-pointer">
                     <LucidePencil/>
                 </button>
-                <!-- <router-link
-                    :to='{name: "Edit a Repository",params: {repo: repo.name}}'
-                >
-                    <LucidePencil/>
-                </router-link> -->
             </div>
         </div>
     </Tile>

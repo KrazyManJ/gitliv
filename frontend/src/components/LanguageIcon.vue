@@ -23,6 +23,8 @@ const iconId = (
         "scss": "sass",
         "c#": "sharp",
         "qml": "qt",
+        "tsql": "sqlite",
+        "batchfile": "gnometerminal"
     })[language.toLowerCase()] ?? language
 ).toLowerCase()
 

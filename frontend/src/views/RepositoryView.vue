@@ -5,7 +5,6 @@ import { useGithubStore } from "@/stores/github.ts";
 import File from "@/components/File.vue";
 import { LucideArrowLeft, LucideCornerLeftUp } from "lucide-vue-next";
 import { useRoute } from "vue-router";
-import MyButton from "@/components/Button.vue";
 import Loading from "@/components/LoadingTile.vue";
 import Select from "@/components/Select.vue";
 import { computed } from "vue";

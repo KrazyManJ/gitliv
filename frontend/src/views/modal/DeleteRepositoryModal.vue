@@ -6,6 +6,7 @@ import Input from '@/components/Input.vue';
 import type Repo from '@/model/Repo';
 import { useGithubAuthStore } from '@/stores/githubAuth';
 import { useModalStore } from '@/stores/modal';
+import { usePopupStore } from '@/stores/popup';
 import { LucideTrash, LucideX } from 'lucide-vue-next';
 import { computed, reactive } from 'vue';
 
@@ -22,6 +23,7 @@ const state = reactive<{
 })
 
 const { hideModal } = useModalStore()
+const { showPopup } = usePopupStore()
 
 const githubAuth = useGithubAuthStore()
 
@@ -32,6 +34,7 @@ const handleClick = async () => {
     if (state.confirmInput === `${githubAuth.user?.username}/${repo.name}`) {
         state.proceeding = true
         await api.delete(`/repos/${fullRepoName.value}`)
+        showPopup("success",`Successfully deleted repository \`${githubAuth.user?.username}/${repo.name}\``)
         hideModal("success")
     }
 }

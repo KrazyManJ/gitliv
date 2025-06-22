@@ -100,15 +100,13 @@ export const useGithubStore = defineStore("github", () => {
         repoData.current = null
         await api.get<Repo>(`/repos/${owner}/${repo}`).then((response) => {
             repoData.current = response.data
-            console.log(`Fetched repo: ${response.data}`)
         })
     }
 
 
-    const fetchRepos = () => {
-        api.get<Repo[]>(`user/repos`).then((response) => {
+    const fetchRepos = async () => {
+        await api.get<Repo[]>(`user/repos`).then((response) => {
             repos.splice(0, repos.length);
-            console.log(response.data)
             response.data
                 .sort((a, b) => -a.pushed_at.localeCompare(b.pushed_at))
                 .forEach((repo: Repo) => repos.push(repo));
