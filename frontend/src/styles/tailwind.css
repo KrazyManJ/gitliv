@@ -3,6 +3,7 @@
 @theme {
     --font-mono: "Jetbrains Mono";
     --color-primary: #7310b0;
+    --color-primary-light: #b253ed;
 }
 
 @custom-variant dark (&:where(.dark, .dark *));

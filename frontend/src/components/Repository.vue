@@ -46,12 +46,14 @@ onMounted(() => {
     <Tile class="flex flex-col gap-4 grow">
         <router-link
             :to="`/repos/${repo.owner.login}/${repo.name}/commits/${repo.default_branch}`"
-            class="flex w-fit"
+            class="block max-w-fit"
         >
-            <h3 class="text-xl font-bold flex items-center gap-2">
-                <LucideBookLock class="stroke-primary" v-if="repo.visibility === 'private'"/>
-                <LucideBook class="stroke-primary" v-else/>
-                <span class="text-primary underline">{{ repo.name }}</span>
+            <h3 class="text-xl font-bold gap-2 flex items-center">
+                <LucideBookLock class="stroke-primary dark:stroke-primary-light" v-if="repo.visibility === 'private'"/>
+                <LucideBook class="stroke-primary dark:stroke-primary-light" v-else/>
+                <div class="text-primary dark:text-primary-light underline truncate">
+                    {{ repo.name }}
+                </div>
             </h3>
         </router-link>
         <div class="grow">

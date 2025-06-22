@@ -43,11 +43,13 @@ const state = reactive<{
                 variant="primary"
                 text-style="mono"
                 @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})"
+                class="fixed right-4 bottom-4 md:sticky py-4 md:py-2 shadow-lg shadow-zinc-700/50 md:shadow-none z-10 md:z-0"
             >
-                <LucideBookPlus class="stroke-zinc-100"/> Create a Repository
+                <LucideBookPlus class="stroke-zinc-100 scale-150 md:scale-100"/>
+                <span class="hidden md:inline text-zinc-100">Create a Repository</span>
             </Button>
         </div>
-        <div data-cy="repositories" class="grid lg:grid-cols-3 gap-8 md:grid-cols-2 grid-cols-1">
+        <div data-cy="repositories" class="grid lg:grid-cols-3 gap-8 md:grid-cols-2 grid-cols-1 pb-18 md:pb-0">
             <Repository
                 data-cy="repository"
                 v-for="repo in repos.filter(repo => repo.name.toLocaleLowerCase().includes(state.searchInput.toLocaleLowerCase()))"

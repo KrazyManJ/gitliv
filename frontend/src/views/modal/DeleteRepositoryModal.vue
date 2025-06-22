@@ -40,8 +40,8 @@ const handleClick = async () => {
 
 <template>
     <div class="flex flex-col justify-center gap-8">
-        <h1 class="text-center text-2xl">Deleting <InlineCode class="text-2xl">{{ fullRepoName }}</InlineCode>...</h1>
-        <p class="text-justify px-4">
+        <h1 class="text-center text-2xl select-none pointer-none">Deleting <InlineCode class="text-2xl">{{ fullRepoName }}</InlineCode>...</h1>
+        <p class="px-4 select-none pointer-none">
             You are about to delete repository <InlineCode>{{ fullRepoName }}</InlineCode>. This
             action cannot be undone, so please think about it at least once.
         </p>
@@ -54,11 +54,11 @@ const handleClick = async () => {
             </p>
             <Input v-model="state.confirmInput" />
         </div>
-        <div class="flex justify-evenly px-8 gap-16">
+        <div class="flex justify-evenly md:px-8 md:gap-16">
             <Button
                 text-style="mono"
                 @click="hideModal"
-                class="grow"
+                class="md:grow"
                 >
                 <LucideX :size="20" class="stroke-zinc-100"/>
                 Cancel
@@ -69,7 +69,7 @@ const handleClick = async () => {
                 @click="handleClick"
                 :disabled="state.confirmInput !== fullRepoName"
                 :loading="state.proceeding"
-                class="grow"
+                class="md:grow"
             >
                 <LucideTrash :size="20" class="stroke-zinc-100"/>
                 Delete
