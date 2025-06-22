@@ -51,7 +51,10 @@ onMounted(() => {
 
         <!-- Top Controls -->
         <div class="mb-5">
-            <router-link :to="{ name: 'Commits', params: { owner: username, repo: name, branch } }">
+            <router-link
+                :to="{ name: 'Commits', params: { owner: username, repo: name, branch } }"
+                data-cy="back"
+            >
                 <LucideArrowLeft />
             </router-link>
         </div>

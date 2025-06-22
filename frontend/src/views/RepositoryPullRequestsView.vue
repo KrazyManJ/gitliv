@@ -71,7 +71,7 @@ function openPullRequestModal() {
             </h1>
 
             <div class="mt-3 md:mt-0 self-start md:self-auto">
-                <MyButton variant="primary" @click="openPullRequestModal">
+                <MyButton variant="primary" @click="openPullRequestModal" data-cy="new-pr-button">
                     New
                 </MyButton>
             </div>
