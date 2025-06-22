@@ -52,7 +52,7 @@ onMounted(() => {
                     {{ optLabel }}
                 </option>
             </select>
-            <LucideChevronDown :size="16" class="absolute dark:stroke-zinc-300 right-2.25 top-2.25"/>
+            <LucideChevronDown :size="16" class="absolute dark:stroke-zinc-300 right-2.25 top-2.25 pointer-events-none"/>
         </div>
     </label>
 </template>
