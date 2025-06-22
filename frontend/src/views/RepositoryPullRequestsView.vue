@@ -4,9 +4,12 @@ import { useRoute } from "vue-router";
 import { useGithubStore } from "@/stores/github";
 import PullRequest from "@/components/PullRequest.vue";
 import PullRequestPopup from "@/components/PullRequestPopup.vue";
-import { LucideArrowLeft } from "lucide-vue-next";
 import MyButton from "@/components/Button.vue";
 import { useModalStore } from "@/stores/modal";
+import Tile from "@/components/Tile.vue";
+import { usePopupStore } from '@/stores/popup'; // import popup store
+
+const popupStore = usePopupStore();
 
 const modalStore = useModalStore();
 
@@ -24,7 +27,9 @@ onMounted(async () => {
         await fetchPullRequests(owner, repo);
         await fetchBranches(owner, repo);
     } catch (err) {
-        error.value = (err as Error).message;
+        const msg = (err as Error).message || "Failed to load data.";
+        error.value = msg;
+        popupStore.showPopup("error", msg); // ✅ Move this here
     } finally {
         isLoading.value = false;
     }
@@ -52,14 +57,6 @@ function openPullRequestModal() {
     <main
         class="p-8"
     >
-        <div class="mb-5">
-            <router-link
-                :to="{ name: 'Commits', params: { owner, repo, branch: 'main' } }"
-            >
-                <LucideArrowLeft />
-            </router-link>
-        </div>
-
         <div
             class="flex flex-col md:flex-row md:items-center justify-between mb-6"
         >
@@ -75,17 +72,11 @@ function openPullRequestModal() {
         </div>
 
         <!-- Pull Requests Box -->
-        <div
-            class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 max-h-[70vh] overflow-auto"
+        <Tile
+            class="overflow-hidden"
         >
             <div v-if="isLoading" class="p-6 text-center">
                 Loading pull requests...
-            </div>
-            <div
-                v-else-if="error"
-                class="p-6 text-center text-red-600 dark:text-red-400"
-            >
-                {{ error }}
             </div>
             <ul v-else class="space-y-4 p-6">
                 <li
@@ -98,6 +89,6 @@ function openPullRequestModal() {
                     <PullRequest :pullRequest="pr" :repo-name="repo" />
                 </li>
             </ul>
-        </div>
+        </Tile>
     </main>
 </template>

@@ -9,6 +9,9 @@ import type Branch from "@/model/Branch.ts";
 import Input from "@/components/Input.vue";
 import Select from "@/components/Select.vue";
 import Button from "@/components/Button.vue";
+import { usePopupStore } from '@/stores/popup'; // import popup store
+
+const popupStore = usePopupStore();
 
 const props = defineProps<{
     owner: string;
@@ -50,7 +53,8 @@ async function createPullRequest() {
     if (!fromBranch.value || !toBranch.value || !title.value) return;
 
     loading.value = true;
-    error.value = "";
+    // no need to reset error.value anymore
+    // error.value = "";
 
     try {
         const pr = await githubStore.createPullRequest(
@@ -64,16 +68,42 @@ async function createPullRequest() {
         emit("created", pr.html_url);
         modalStore.hideModal(); // Close modal on success
     } catch (err: unknown) {
-        if (err instanceof Error) {
-            error.value = err.message;
-        } else {
-            error.value = "Failed to create pull request.";
+        let message = "Failed to create pull request.";
+
+        if (
+            typeof err === "object" &&
+            err !== null &&
+            "response" in err &&
+            typeof (err as { response?: unknown }).response === "object" &&
+            (err as { response?: { status?: unknown } }).response !== null
+        ) {
+            const response = (err as { response: { status?: unknown } }).response;
+            const status = typeof response.status === "number" ? response.status : undefined;
+
+            if (status === 422) {
+                message = "Invalid input. Please check your data and try again.";
+            } else if (status === 403) {
+                message = "Access denied. You might not have permissions.";
+            } else if (status === 404) {
+                message = "Repository not found.";
+            } else if (
+                "message" in err &&
+                typeof (err as { message?: unknown }).message === "string"
+            ) {
+                message = (err as { message: string }).message;
+            }
+        } else if (err instanceof Error) {
+            message = err.message || message;
         }
+
+        popupStore.showPopup("error", message);
+
         console.error(err);
     } finally {
         loading.value = false;
     }
 }
+
 
 function cancel() {
     modalStore.hideModal();
@@ -126,7 +156,5 @@ function cancel() {
                 Create
             </Button>
         </div>
-
-        <p v-if="error" class="text-red-600 dark:text-red-400">{{ error }}</p>
     </div>
 </template>
