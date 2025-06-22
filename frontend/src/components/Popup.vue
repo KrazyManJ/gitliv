@@ -45,18 +45,18 @@ const iconMap: Record<PopupType,Component> = {
         <div
             v-if="visible"
             :class='[
-                "p-2 px-8 rounded-xl shadow-lg flex items-center gap-4 pointer-events-auto max-w-lg transition-opacity duration-300",
+                "m-2 p-2 px-4 rounded-xl shadow-lg flex items-center gap-4 pointer-events-auto max-w-full md:max-w-lg transition-opacity duration-300",
                 {
-                    "bg-lime-500/75": popupInfo.type === "success",
-                    "bg-blue-400/75": popupInfo.type === "info",
-                    "bg-yellow-400/75": popupInfo.type === "warning",
-                    "bg-red-400/75": popupInfo.type === "error",
+                    "bg-lime-500": popupInfo.type === "success",
+                    "bg-blue-400": popupInfo.type === "info",
+                    "bg-yellow-400": popupInfo.type === "warning",
+                    "bg-red-400": popupInfo.type === "error",
                 }
             ]'
             @click="dismiss"
         >
-            <component :is="iconMap[popupInfo.type]"/>
-            <p>{{ popupInfo.message }}</p>
+            <component :is="iconMap[popupInfo.type]" class="shrink-0"/>
+            <p class="text-sm" :title="popupInfo.message">{{ popupInfo.message }}</p>
         </div>
     </Transition>
 </template>

@@ -50,9 +50,9 @@ watch(() => state.isVisible, (visible) => {
             ref="modalRef"
             @keyup="handleModalKeyUp"
         >
-            <Tile class="max-w-lg w-full shadow-xl">
+            <Tile class="w-full md:max-w-lg shadow-xl">
                 <div v-if="state.options.showCloseX && state.options.canClose" class="flex justify-end">
-                    <LucideX :size="16" class="stroke-red-400 cursor-pointer" data-cy="modal-close-button" @click="hideModal"/>
+                    <LucideX :size="16" class="stroke-red-400 cursor-pointer" data-cy="modal-close-button" @click="() => hideModal()"/>
                 </div>
                 <component :is="state.content" v-bind="state.props"/>
             </Tile>

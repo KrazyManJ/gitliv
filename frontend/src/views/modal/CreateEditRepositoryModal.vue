@@ -108,13 +108,15 @@ const modalRef = useTemplateRef("modalRef");
                 v-model="state.name"
                 :rules="nameRules"
                 ref="modalRef"
-                class="font-mono"
+                class="font-mono w-full"
                 :icon="LucidePencil"
             />
             <Input
-                label="Description" v-model="state.description"
+                label="Description"
+                v-model="state.description"
                 placeholder="No description provided..."
                 :icon="LucideLetterText"
+                class="w-full"
             />
             <Select
                 label="Visibility"
@@ -128,10 +130,10 @@ const modalRef = useTemplateRef("modalRef");
             />
             <Input data-cy="readme" v-if="!repo" label="Initialize with README.md file" v-model="state.initWithReadme" type="checkbox"/>
             </div>
-            <div class="flex justify-evenly px-8 gap-16">
+            <div class="flex justify-evenly md:px-8 md:gap-16">
                 <Button
                     text-style="mono"
-                    class="grow"
+                    class="md:grow"
                     @click="hideModal"
                 >
                     <LucideX :size="20" class="stroke-zinc-100"/>
@@ -141,7 +143,7 @@ const modalRef = useTemplateRef("modalRef");
                     data-cy="yes"
                     variant="primary"
                     text-style="mono"
-                    class="grow"
+                    class="md:grow"
                     :disabled="!isInputValid || state.loading"
                     :loading="state.loading"
                     type="submit"

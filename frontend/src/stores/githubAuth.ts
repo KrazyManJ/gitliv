@@ -10,6 +10,7 @@ const TOKEN_COOKIE_NAME = "auth_token";
 export const useGithubAuthStore = defineStore("githubAuth", () => {
 
     const user = ref<GithubOAuthUser | null>()
+    const loading = ref<boolean>(false)
 
     const redirectToGithubOAuth = () => {
         const hostname = window.location.hostname
@@ -25,12 +26,14 @@ export const useGithubAuthStore = defineStore("githubAuth", () => {
         setBearerAuthToken(token)
 
         try {
+            loading.value = true
             const {data} = await api.get<GithubUser>('/user').catch();
             user.value = {
                 avatar: data.avatar_url,
                 token: token,
                 username: data.login
             }
+            loading.value = false
         } catch {
             return false
         }
@@ -56,6 +59,7 @@ export const useGithubAuthStore = defineStore("githubAuth", () => {
     return {
         redirectToGithubOAuth,
         user,
+        loading,
         processAuthData,
         logout,
         loadUserFromCookies,

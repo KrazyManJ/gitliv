@@ -47,30 +47,30 @@ const copyToClipboard = async (text: string | undefined) => {
     </div>
     <div data-cy="clone-modal">
         <div v-if="madeChoice == choice.HTTPS">
-            <div class="flex mt-2 gap-5">
+            <div class="flex mt-2 gap-5 items-center">
                 <InlineCode>{{repoData.current?.clone_url}}</InlineCode>
                 <LucideCheck v-if="copied" />
-                <LucideClipboardCopy class="cursor-pointer" v-else @click="copyToClipboard(repoData.current?.clone_url)"/>
+                <LucideClipboardCopy class="cursor-pointer shrink-0" :size="24" v-else @click="copyToClipboard(repoData.current?.clone_url)"/>
             </div>
             <div class="mt-3 flex flex-col">
                 <span class="text-gray-400 text-sm">Clone using the web URL.</span>
             </div>
         </div>
         <div v-if="madeChoice == choice.SSH">
-            <div class="flex mt-2 gap-5">
+            <div class="flex mt-2 gap-5 items-center">
                 <InlineCode>{{repoData.current?.ssh_url}}</InlineCode>
                 <LucideCheck v-if="copied" />
-                <LucideClipboardCopy class="cursor-pointer" v-else @click="copyToClipboard(repoData.current?.ssh_url)"/>
+                <LucideClipboardCopy class="cursor-pointer shrink-0" v-else @click="copyToClipboard(repoData.current?.ssh_url)"/>
             </div>
             <div class="mt-3 flex flex-col">
                 <span class="text-gray-400 text-sm">Use a password-protected SSH key.</span>
             </div>
         </div>
         <div v-if="madeChoice == choice.CLI">
-            <div class="flex mt-2 gap-5">
+            <div class="flex mt-2 gap-5 items-center">
                 <InlineCode>git repo clone {{owner}}/{{repo}}</InlineCode>
                 <LucideCheck v-if="copied" />
-                <LucideClipboardCopy class="cursor-pointer" v-else
+                <LucideClipboardCopy class="cursor-pointer shrink-0" v-else
                                      @click="copyToClipboard(`git repo clone ${owner}/${repo}`)"/>
             </div>
             <div class="mt-3 flex flex-col">

@@ -3,6 +3,8 @@ import { api } from '@/api';
 import type Repo from '@/model/Repo';
 import { useLinguistStore } from '@/stores/linguist';
 import { reactive } from 'vue';
+import LoadingTile from './LoadingTile.vue';
+import LanguageIcon from './LanguageIcon.vue';
 
 interface LangBytesData {
     lang: string,
@@ -11,9 +13,11 @@ interface LangBytesData {
 }
 
 const state = reactive<{
+    loading: boolean
     totalBytes: number
     data: LangBytesData[]
 }>({
+    loading: true,
     totalBytes: 0,
     data: []
 })
@@ -47,32 +51,38 @@ const state = reactive<{
             )
             state.totalBytes = sum
         })
+        state.loading = false
     }
 
     fetchLangData()
 </script>
 
 <template>
-    <div class="h-4 bg-zinc-500 rounded-full flex overflow-hidden">
-        <div
-            v-for="(data,index) in state.data"
-            :key="index"
-            :style="`width: ${data.bytes/state.totalBytes*100}%; background-color: ${data.color}`"
-            class="h-full"
-            :name="data.lang"
-        />
-    </div>
-    <div class="columns-3 px-8">
-        <div
-            v-for="(data,index) in state.data"
-            :key="index"
-            class="flex items-center gap-2"
-        >
+    <div class="flex flex-col gap-2">
+        <LoadingTile v-if="state.loading" class="h-4 bg-zinc-500 rounded-full flex overflow-hidden" />
+        <div v-else class="h-4 bg-zinc-500 rounded-full flex overflow-hidden">
             <div
-                class="h-3 aspect-square rounded-full"
-                :style="`background-color: ${data.color}`"
+                v-for="(data,index) in state.data"
+                :key="index"
+                :style="`width: ${data.bytes/state.totalBytes*100}%; background-color: ${data.color}`"
+                class="h-full"
+                :name="data.lang"
             />
-            {{ data.lang }} ({{ (data.bytes/state.totalBytes*100).toFixed(2) }}%)
+        </div>
+        <div v-if="state.data.length === 0 && !state.loading" class="text-center italic text-zinc-500">No language data found</div>
+        <div class="md:columns-2 lg:columns-3 px-8 gap-16 mt-10">
+            <div
+                v-for="(data,index) in state.data"
+                :key="index"
+                class="flex items-center gap-2 mb-2"
+            >
+                <span class="flex gap-2">
+                    <LanguageIcon :language="data.lang"/>
+                    {{ data.lang }}
+                </span>
+                <span class="grow"/>
+                {{ (data.bytes/state.totalBytes*100).toFixed(2) }}%
+            </div>
         </div>
     </div>
 </template>

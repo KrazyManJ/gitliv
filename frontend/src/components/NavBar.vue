@@ -6,6 +6,7 @@ import { LucideChevronUp, LucideLogOut, LucideSettings } from 'lucide-vue-next';
 import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import Tile from './Tile.vue';
 import ThemePicker from './ThemePicker.vue';
+import LoadingTile from './LoadingTile.vue';
 
 const authStore = useGithubAuthStore()
 const router = useRouter()
@@ -51,14 +52,23 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                 class="flex items-center gap-8 relative"
                 ref="rightSide"
             >
+                <div v-if="authStore.loading" class="flex items-center gap-2 cursor-pointer select-none">
+                    <LoadingTile>
+                        <span class="font-mono font-light text-sm hidden md:inline">username</span>
+                    </LoadingTile>
+                    <LoadingTile class="w-[32px] h-[32px] rounded-full"/>
+                    <LoadingTile>
+                        <LucideChevronUp :size="16"/>
+                    </LoadingTile>
+                </div>
                 <div
                     data-cy="dropDown"
                     class="flex items-center gap-2 cursor-pointer select-none"
                     ref="button"
                     @click="() => menuOpened = !menuOpened"
-                    v-if="authStore.user"
+                    v-else-if="authStore.user"
                 >
-                    <span class="font-mono font-light text-sm">{{ authStore.user.username }}</span>
+                    <span class="font-mono font-light text-sm hidden md:inline">{{ authStore.user.username }}</span>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
                     <LucideChevronUp :size="16" :class='[
                         "pointer-events-none transition-transform",
@@ -66,7 +76,6 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                             "rotate-180": menuOpened
                         }
                     ]'/>
-                    <!-- <LucideChevronDown v-else :size="16" class="pointer-events-none"/> -->
                 </div>
                 <div
                     v-else
@@ -76,6 +85,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                     <LucideSettings/>
                 </div>
 
+                <!-- MENU -->
                 <div
                     v-if="menuOpened"
                     class="absolute top-[100%] right-0 mt-2 select-none z-40"

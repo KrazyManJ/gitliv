@@ -30,7 +30,7 @@ onMounted(() => {
             <RouterView />
         </div>
         <Modal/>
-        <div class="fixed inset-0 z-50 flex pointer-events-none flex-col items-center gap-4 py-4">
+        <div class="fixed inset-0 z-50 flex pointer-events-none flex-col items-center gap-4 p-2">
             <Popup v-for="(popupInfo,i) in popups" :key="i" :popup-info="popupInfo"/>
         </div>
     </div>
