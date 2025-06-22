@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import {reactive, ref} from "vue";
+import {reactive, ref } from "vue";
 import type GithubUser from "../model/GithubUser";
 import type Repo from "../model/Repo";
 import { api } from "@/api";
@@ -16,21 +16,15 @@ export const useGithubStore = defineStore("github", () => {
     const userNotOAuth = reactive<{ current: GithubUser | null }>({ current: null });
     const repos = reactive<Repo[]>([]);
     const branches = reactive<Branch[]>([]);
-    const treeHistory = ref<string[]>([])
     const isLoading = ref(true)
+    const isLoadingBranches = ref(false);
+    const isLoadingFiles = ref(false);
     const files = reactive<GitFileFromTree[]>([])
     const commits = reactive<Commit[]>([]);
     const pullRequests = reactive<PullRequest[]>([]);
     const fileData = reactive<{current: GitFileSingle | null}>({current: null})
     const repoData = reactive<{current: Repo | null}>({current: null})
     const hasLoadedOnce = ref(false);
-
-
-    // const fetchBranchFromRepo = async (username: string, name: string) => {
-    //     await api.get<Branch>(`/repos/${username}/${name}/branches/main`).then((response) => {
-    //         branch.current = response.data
-    //     });
-    // }
 
     const fetchFile = async (file: string, username: string, name: string) => {
         fileData.current = null
@@ -45,49 +39,64 @@ export const useGithubStore = defineStore("github", () => {
     }
 
     const fetchBranchesFromRepo = async (username: string, name: string) => {
-        isLoading.value = true
+        isLoadingBranches.value = true;
         try {
-            await api.get<Branch[]>(`/repos/${username}/${name}/branches`).then((response) => {
-                branches.splice(0,branches.length)
-                response.data.forEach((branch: Branch) => branches.push(branch))
-            });
-        }finally {
-            isLoading.value = false
+            const response = await api.get<Branch[]>(`/repos/${username}/${name}/branches`);
+            branches.splice(0, branches.length);
+            response.data.forEach((branch: Branch) => branches.push(branch));
+        } finally {
+            isLoadingBranches.value = false;
         }
-    }
+    };
 
-    const fetchFilesFromRepoFirst = async (username: string, name: string, branch: string) => {
-        isLoading.value = true;
+    const fetchFilesFromBranchRoot = async (username: string, name: string, branch: string) => {
+        files.splice(0, files.length);
+        isLoadingFiles.value = true;
         hasLoadedOnce.value = false;
-
         try {
-            const { data } = await api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`);
-            const response = await api.get<GitTree>(data.commit.commit.tree.url);
-            treeHistory.value.splice(0, treeHistory.value.length);
-            treeHistory.value.push(response.data.sha);
-
-            files.splice(0, files.length);
+            const { data: branchData } = await api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`);
+            const response = await api.get<GitTree>(branchData.commit.commit.tree.url);
             response.data.tree.forEach((file: GitFileFromTree) => files.push(file));
         } finally {
-            isLoading.value = false;
+            isLoadingFiles.value = false;
             hasLoadedOnce.value = true;
         }
     };
 
-
-
     const fetchFilesFromRepo = async (username: string, name: string, treePath: string) => {
-        files.splice(0, files.length)
-        isLoading.value = true;
+        files.splice(0, files.length);
+        isLoadingFiles.value = true;
         try {
-           const response = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`)
-            console.log(response.data)
-            response.data.tree.forEach((file: GitFileFromTree) => files.push(file))
-
+            const response = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${treePath}`);
+            response.data.tree.forEach((file: GitFileFromTree) => files.push(file));
         } finally {
-            isLoading.value = false
+            isLoadingFiles.value = false;
         }
-    }
+    };
+
+    const resolvePathToTreeSha = async (username: string, name: string, branch: string, path: string) => {
+        const { data: branchData } = await api.get<Branch>(`/repos/${username}/${name}/branches/${branch}`);
+
+        const treeUrl = branchData.commit.commit.tree.url;
+        const { data: rootTree } = await api.get<GitTree>(treeUrl);
+        let currentSha = rootTree.sha;
+
+        if (!path) return currentSha;
+
+        const segments = path.split("/").filter(Boolean);
+
+        for (const segment of segments) {
+            const { data } = await api.get<GitTree>(`/repos/${username}/${name}/git/trees/${currentSha}`);
+            const found = data.tree.find((item: GitFileFromTree) => item.path === segment && item.type === "tree");
+
+            if (!found) throw new Error(`Path segment "${segment}" not found.`);
+
+            currentSha = found.sha;
+        }
+
+        return currentSha;
+    };
+
 
     // const fetchRepoZip = async (owner: string, repo: string) => {
     //     await api.get(`/repos/${owner}/${repo}/zipball`).then((response) => {
@@ -184,8 +193,8 @@ export const useGithubStore = defineStore("github", () => {
         owner: string,
         repo: string,
         title: string,
-        head: string, // source branch
-        base: string, // target branch
+        head: string,
+        base: string,
         body?: string
     ) => {
         try {
@@ -257,9 +266,10 @@ export const useGithubStore = defineStore("github", () => {
         }
     };
 
-    return { user: userNotOAuth, repos, commits, files, isLoading, treeHistory, branches, pullRequests,
-        fileData, repoData, hasLoadedOnce, fetchRepos, fetchCommits, fetchFilesFromRepoFirst, fetchFilesFromRepo,
+    return { user: userNotOAuth, repos, commits, files, isLoading, branches, pullRequests,
+        fileData, repoData, hasLoadedOnce,  isLoadingBranches,
+        isLoadingFiles, fetchRepos, fetchCommits, fetchFilesFromRepo,
         fetchBranchesFromRepo, fetchPullRequests, createPullRequest, fetchBranches, fetchFile,
         fetchCommitDetails, fetchPullRequest, fetchPullRequestCommits, fetchPullRequestFiles,
-        mergePullRequest, fetchRepo};
+        mergePullRequest, fetchRepo, fetchFilesFromBranchRoot, resolvePathToTreeSha};
 });

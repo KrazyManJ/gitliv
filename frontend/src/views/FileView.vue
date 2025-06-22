@@ -2,8 +2,6 @@
 import { useGithubStore } from "@/stores/github.ts";
 import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
-import { LucideArrowLeft } from "lucide-vue-next";
-import File from "@/components/File.vue";
 
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
@@ -20,8 +18,6 @@ const props = defineProps<{
 const { file, sha, username, name, branch } = props;
 
 const fileContent = ref("");
-
-
 
 const decodeBase64 = (base64: string) => {
     const binaryString = atob(base64);
@@ -51,22 +47,12 @@ onMounted(() => {
             <div class="h-80 bg-zinc-200 dark:bg-zinc-800 rounded-lg animate-pulse" />
         </div>
 
-        <!-- File Display -->
         <div v-else class="space-y-8 py-4">
-            <!-- Back Link -->
-            <div class="mb-4">
-                <router-link :to="{ name: 'Repository', params: { username, name, branch } }">
-                    <LucideArrowLeft class="mr-3 w-6 h-6 text-zinc-600 dark:text-zinc-300" />
-                </router-link>
-            </div>
-
-            <!-- File Header -->
             <div class="mb-2 space-y-4">
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 break-all"  data-cy="file-title">{{ file }}</h1>
                 <p class="text-sm text-primary dark:text-primary font-mono">Branch: {{ branch }}</p>
             </div>
 
-            <!-- File Content -->
             <div
                 data-cy="file-content"
                 class="overflow-x-auto whitespace-pre-wrap bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded p-4 font-mono text-sm leading-relaxed"
