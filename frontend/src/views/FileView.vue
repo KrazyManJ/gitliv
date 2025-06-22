@@ -3,6 +3,7 @@ import { useGithubStore } from "@/stores/github.ts";
 import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { LucideArrowLeft } from "lucide-vue-next";
+import File from "@/components/File.vue";
 
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
@@ -61,12 +62,13 @@ onMounted(() => {
 
             <!-- File Header -->
             <div class="mb-2 space-y-4">
-                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 break-all">{{ file }}</h1>
+                <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100 break-all"  data-cy="file-title">{{ file }}</h1>
                 <p class="text-sm text-primary dark:text-primary font-mono">Branch: {{ branch }}</p>
             </div>
 
             <!-- File Content -->
             <div
+                data-cy="file-content"
                 class="overflow-x-auto whitespace-pre-wrap bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 rounded p-4 font-mono text-sm leading-relaxed"
             >
                 <highlightjs autodetect :code="fileContent" />

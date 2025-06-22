@@ -5,9 +5,12 @@ import { useGithubAuthStore } from "./stores/githubAuth";
 import NavBar from "./components/NavBar.vue";
 import Modal from "./components/Modal.vue";
 import { useModalStore } from "./stores/modal";
+import { usePopupStore } from "./stores/popup";
+import Popup from "./components/Popup.vue";
 
 const { loadUserFromCookies, logout } = useGithubAuthStore()
 const { state } = useModalStore()
+const { popups } = usePopupStore()
 
 const router = useRouter()
 
@@ -27,5 +30,8 @@ onMounted(() => {
             <RouterView />
         </div>
         <Modal/>
+        <div class="fixed inset-0 z-50 flex pointer-events-none flex-col items-center gap-4 py-4">
+            <Popup v-for="(popupInfo,i) in popups" :key="i" :popup-info="popupInfo"/>
+        </div>
     </div>
 </template>

@@ -4,8 +4,11 @@ import Button from "@/components/Button.vue";
 import Input, { type Rule } from "@/components/Input.vue";
 import Select from "@/components/Select.vue";
 import type Repo from "@/model/Repo";
+import { useGithubStore } from "@/stores/github";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import { useModalStore } from "@/stores/modal";
+import { usePopupStore } from "@/stores/popup";
+import type { AxiosError } from "axios";
 import { LucideSave, LucideX } from "lucide-vue-next";
 import { computed, onMounted, reactive, useTemplateRef } from "vue";
 
@@ -27,33 +30,47 @@ const state = reactive<{
 
 const { user } = useGithubAuthStore()
 const { hideModal } = useModalStore()
+const { showPopup } = usePopupStore()
+const { repos } = useGithubStore()
+
+const repoNames = computed(() => repos.map(v => v.name))
 
 const submit = async () => {
-    if (isInputValid.value) return
+    if (!isInputValid.value) return
+
+    state.loading = true
 
     const body = {
         name: state.name,
-        description: state.description.length === 0 ? undefined : state.description,
         private: state.visibility === "private",
+        description: state.description.length !== 0 ? state.description : undefined,
         auto_init: state.initWithReadme
     }
 
-    if (repo){
-        await api.patch(`repos/${user?.username}/${repo}`, body)
+    try {
+        if (repo){
+            await api.patch(`repos/${user?.username}/${repo}`, body)
+        }
+        else {
+            await api.post(`user/repos`, body);
+        }
+        showPopup("success",`Successfully ${repo ? "updated" : "added"} repository \`${state.name}\`.`)
+    } catch (e) {
+        const error = (e as AxiosError)
+        const data = error.response?.data as { message?: string } | undefined
+        const message = data?.message || error.message
+        showPopup("error",`Error while ${repo ? "adding" : "editing"} repository: ${message}`)
     }
-    else {
-        await api.post(`user/repos`, body);
-    }
-
     hideModal()
 };
-
-const isInputValid = computed(() => !nameRules.every(rule => rule(state.name) === true))
 
 const nameRules: Rule[] = [
     (v) => !!v || 'Required',
     (v) => /^[a-z0-9\-\.\_]+$/i.test(v as string) || 'The repository name can only contain ASCII letters, digits, and the characters ., -, and _.',
+    (v) => (!repoNames.value.includes(v as string) || !!repo) || 'Repository already exists'
 ]
+
+const isInputValid = computed(() => nameRules.every(rule => rule(state.name) === true))
 
 const { repo } = defineProps<{
     repo?: string
@@ -64,7 +81,7 @@ onMounted(async () => {
     if (repo) {
         await api.get<Repo>(`/repos/${user?.username}/${repo}`).then(({data: repo}) => {
             state.name = repo.name
-            state.description = repo.description
+            state.description = repo.description ?? ""
             state.visibility = repo.visibility
         });
     }
@@ -91,6 +108,7 @@ const modalRef = useTemplateRef("modalRef");
                 v-model="state.name"
                 :rules="nameRules"
                 ref="modalRef"
+                class="font-mono"
             />
             <Input
                 label="Description" v-model="state.description"
@@ -121,8 +139,7 @@ const modalRef = useTemplateRef("modalRef");
                     variant="primary"
                     text-style="mono"
                     class="grow"
-                    :disabled="isInputValid"
-                    @click="submit"
+                    :disabled="!isInputValid || state.loading"
                     :loading="state.loading"
                     type="submit"
                 >
