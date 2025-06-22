@@ -72,7 +72,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
 
                 <div
                     v-if="menuOpened"
-                    class="absolute top-[100%] right-0 mt-2 select-none"
+                    class="absolute top-[100%] right-0 mt-2 select-none z-40"
                 >
                     <Tile class="p-0 shadow-xl overflow-hidden">
                         <ThemePicker class="dark:not-last:border-b-zinc-700 not-last:border-b-zinc-200 not-last:border-b-1"/>
