@@ -4,13 +4,12 @@ import Repository from "@/components/Repository.vue";
 import { LucideBookPlus, LucideFrown, LucideSearch } from "lucide-vue-next";
 import { useModalStore } from "@/stores/modal";
 import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
-import { Fragment, onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import DeleteRepositoryModal from "./modal/DeleteRepositoryModal.vue";
 import Input from "@/components/Input.vue";
 import GithubLanguageStats from "@/components/GithubLanguageStats.vue";
 import Button from "@/components/Button.vue";
 import LoadingTile from "@/components/LoadingTile.vue";
-import HorizontalRule from "@/components/HorizontalRule.vue";
 import { useGithubAuthStore } from "@/stores/githubAuth";
 import { storeToRefs } from "pinia";
 
@@ -20,7 +19,7 @@ const { user } = storeToRefs(useGithubAuthStore())
 const loading = ref<boolean>(true);
 
 onMounted(async () => {
-    await fetchRepos()
+    if (repos.length === 0) await fetchRepos()
     loading.value = false
 })
 
