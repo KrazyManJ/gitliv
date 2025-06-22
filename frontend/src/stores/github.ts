@@ -98,10 +98,10 @@ export const useGithubStore = defineStore("github", () => {
 
     const fetchRepo = async (owner:string, repo:string) => {
         repoData.current = null
-           await api.get<Repo>(`/repos/${owner}/${repo}`).then((response) => {
-                repoData.current = response.data
-                console.log(`Fetched repo: ${response.data}`)
-            })
+        await api.get<Repo>(`/repos/${owner}/${repo}`).then((response) => {
+            repoData.current = response.data
+            console.log(`Fetched repo: ${response.data}`)
+        })
     }
 
 

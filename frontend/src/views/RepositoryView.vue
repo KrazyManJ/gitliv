@@ -47,7 +47,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
+    <main class="p-8 min-h-screen">
 
         <!-- Top Controls -->
         <div class="mb-5">

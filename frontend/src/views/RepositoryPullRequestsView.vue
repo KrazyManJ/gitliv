@@ -50,7 +50,7 @@ function openPullRequestModal() {
 
 <template>
     <main
-        class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100"
+        class="p-8"
     >
         <div class="mb-5">
             <router-link
@@ -65,9 +65,6 @@ function openPullRequestModal() {
         >
             <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
                 Pull Requests
-                <span class="text-primary text-2xl ml-2 break-words">{{
-                        owner
-                    }}/{{ repo }}</span>
             </h1>
 
             <div class="mt-3 md:mt-0 self-start md:self-auto">

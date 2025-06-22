@@ -2,7 +2,7 @@
 
 import { useGithubAuthStore } from '@/stores/githubAuth';
 import { useRouter } from 'vue-router';
-import { LucideChevronDown, LucideChevronUp, LucideLogOut, LucideSettings } from 'lucide-vue-next';
+import { LucideChevronUp, LucideLogOut, LucideSettings } from 'lucide-vue-next';
 import { onMounted, onUnmounted, ref, useTemplateRef } from 'vue';
 import Tile from './Tile.vue';
 import ThemePicker from './ThemePicker.vue';
@@ -60,8 +60,13 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
                 >
                     <span class="font-mono font-light text-sm">{{ authStore.user.username }}</span>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
-                    <LucideChevronUp v-if="!menuOpened" :size="16" class="pointer-events-none"/>
-                    <LucideChevronDown v-else :size="16" class="pointer-events-none"/>
+                    <LucideChevronUp :size="16" :class='[
+                        "pointer-events-none transition-transform",
+                        {
+                            "rotate-180": menuOpened
+                        }
+                    ]'/>
+                    <!-- <LucideChevronDown v-else :size="16" class="pointer-events-none"/> -->
                 </div>
                 <div
                     v-else

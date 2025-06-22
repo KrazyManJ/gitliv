@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github";
 import Repository from "@/components/Repository.vue";
-import { LucidePlus } from "lucide-vue-next";
+import { LucidePlus, LucideSearch } from "lucide-vue-next";
 import { useModalStore } from "@/stores/modal";
 import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
 import { onMounted, reactive } from "vue";
@@ -26,13 +26,13 @@ const state = reactive<{
 </script>
 
 <template>
-    <main class="p-8 flex flex-col gap-8">
+    <main class="p-4 flex flex-col gap-8">
         <button data-cy="add" @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})">
             <LucidePlus/>
         </button>
         <GithubLanguageStats/>
-        <Input v-model="state.searchInput" placeholder="Search..." data-cy="search"/>
-        <div data-cy="repositories" class="grid grid-cols-3 gap-8">
+        <Input v-model="state.searchInput" placeholder="Search..." data-cy="search" :icon="LucideSearch"/>
+        <div data-cy="repositories" class="grid lg:grid-cols-3 gap-8 md:grid-cols-2 grid-cols-1">
             <Repository
                 data-cy="repository"
                 v-for="repo in repos.filter(repo => repo.name.toLocaleLowerCase().includes(state.searchInput.toLocaleLowerCase()))"

@@ -32,7 +32,7 @@ const handleClick = async () => {
     if (state.confirmInput === `${githubAuth.user?.username}/${repo.name}`) {
         state.proceeding = true
         await api.delete(`/repos/${fullRepoName.value}`)
-        hideModal()
+        hideModal("success")
     }
 }
 
