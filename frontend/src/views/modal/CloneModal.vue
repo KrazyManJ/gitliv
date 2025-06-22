@@ -17,7 +17,7 @@ const choice = {
 
 const madeChoice = ref(choice.HTTPS)
 
-const props = defineProps< {
+const {owner, repo} = defineProps< {
     owner: string,
     repo: string
 }>()
@@ -45,8 +45,7 @@ const copyToClipboard = async (text: string | undefined) => {
             <hr v-if="ch == madeChoice" class="w-full h-1 bg-primary">
         </div>
     </div>
-    <div>
-    <div v-else data-cy="clone-modal">
+    <div data-cy="clone-modal">
         <div v-if="madeChoice == choice.HTTPS">
             <div class="flex mt-2 gap-5">
                 <InlineCode>{{repoData.current?.clone_url}}</InlineCode>
