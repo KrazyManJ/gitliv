@@ -31,7 +31,7 @@ const state = reactive<{
             <LucidePlus/>
         </button>
         <GithubLanguageStats/>
-        <Input v-model="state.searchInput" placeholder="Search..." />
+        <Input v-model="state.searchInput" placeholder="Search..." data-cy="search"/>
         <div data-cy="repositories" class="grid grid-cols-3 gap-8">
             <Repository
                 data-cy="repository"
