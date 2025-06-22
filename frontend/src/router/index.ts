@@ -45,7 +45,7 @@ const router = createRouter({
             props: true
         },
         {
-            path: "/:username/repo-view/:name/:branch?",
+            path: "/:username/repo-view/:name/:branch/:pathMatch(.*)*",
             name: "Repository",
             component: RepositoryView,
             meta: { requiresAuth: true },
