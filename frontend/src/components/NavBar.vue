@@ -21,9 +21,15 @@ const button = useTemplateRef("button")
 const rightSide = useTemplateRef("rightSide")
 
 const handleOutsideClick = (event: MouseEvent) => {
-    if (event.target != button.value && !rightSide.value?.contains(event.target as HTMLElement))
-        menuOpened.value = false
+    if (!menuOpened.value) return;
+
+    const target = event.target as HTMLElement;
+
+    if (!button.value?.contains(target) && !rightSide.value?.contains(target)) {
+        menuOpened.value = false;
+    }
 }
+
 
 onMounted(() => window.addEventListener('click', handleOutsideClick))
 onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
@@ -47,15 +53,15 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
             >
                 <div
                     data-cy="dropDown"
-                    class="flex items-center gap-2"
+                    class="flex items-center gap-2 cursor-pointer select-none"
                     ref="button"
                     @click="() => menuOpened = !menuOpened"
                     v-if="authStore.user"
                 >
                     <span class="font-mono font-light text-sm">{{ authStore.user.username }}</span>
                     <img :src="authStore.user.avatar" width="32" height="32" class="rounded-full">
-                    <LucideChevronUp v-if="!menuOpened" :size="16"/>
-                    <LucideChevronDown v-else :size="16"/>
+                    <LucideChevronUp v-if="!menuOpened" :size="16" class="pointer-events-none"/>
+                    <LucideChevronDown v-else :size="16" class="pointer-events-none"/>
                 </div>
                 <div
                     v-else
@@ -67,7 +73,7 @@ onUnmounted(() => window.removeEventListener('click', handleOutsideClick))
 
                 <div
                     v-if="menuOpened"
-                    class="absolute top-[100%] right-0 mt-2 select-none"
+                    class="absolute top-[100%] right-0 mt-2 select-none z-40"
                 >
                     <Tile class="p-0 shadow-xl overflow-hidden">
                         <ThemePicker class="dark:not-last:border-b-zinc-700 not-last:border-b-zinc-200 not-last:border-b-1"/>
