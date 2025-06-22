@@ -7,15 +7,12 @@ import {
     LucidePencil,
     LucideTrash2,
     LucideChevronDown,
-    LucideChevronUp, LucideArrowLeft,
+    LucideChevronUp,
 } from "lucide-vue-next";
 
 const route = useRoute();
 const commit = ref<Commit | null>(null);
 const expandedFiles = ref<Record<string, boolean>>({});
-const username = route.params.username as string;
-const name = route.params.name as string;
-const branch = route.params.branch as string;
 
 const fetchCommit = async () => {
     const { owner, repo, sha } = route.params;
@@ -31,14 +28,8 @@ onMounted(fetchCommit);
 </script>
 
 <template>
-    <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100" data-cy="commit-detail-page">
+    <main class="p-8" data-cy="commit-detail-page">
         <!-- Top Controls -->
-        <div class="mb-5">
-            <router-link :to="{ name: 'Commits', params: { owner: username, repo: name, branch: branch } }">
-                <LucideArrowLeft />
-            </router-link>
-        </div>
-
         <div v-if="commit" class="space-y-4 py-4 w-full max-w-none">
 
             <!-- Commit Description Styled Like a Page Title -->

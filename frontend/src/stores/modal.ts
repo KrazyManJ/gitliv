@@ -12,7 +12,7 @@ type ComponentProps<C extends Component> = C extends new (...args: unknown[]) =>
 interface ShowModalOptions {
     canClose: boolean
     showCloseX: boolean
-    onHide: () => void
+    onHide: (returnState: string) => void
 }
 
 const SHOW_MODAL_OPTIONS_DEFAULTS: ShowModalOptions = {
@@ -41,11 +41,11 @@ export const useModalStore = defineStore("modal",() => {
         state.options = { ...state.options ,...options }
     }
 
-    function hideModal() {
+    function hideModal(returnState: string = "") {
         state.isVisible = false
         state.props = {}
         state.content = null
-        state.options.onHide()
+        state.options.onHide(typeof returnState === "string" ? returnState : "")
     }
 
     return { showModal, hideModal, state }

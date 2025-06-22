@@ -4,19 +4,22 @@ import { useRoute } from "vue-router";
 import { useGithubStore } from "@/stores/github";
 import Commit from "@/components/Commits.vue";
 import GitGraph from "@/components/GitGraph.vue";
-import {LucideArrowLeft} from "lucide-vue-next";
 import {useModalStore} from "@/stores/modal.ts";
 import CloneModal from "@/views/modal/CloneModal.vue";
-import Loading from "@/components/LoadingTile.vue";
+import LoadingTile from "@/components/LoadingTile.vue";
 import BranchSelect from "@/components/Select.vue";
-import MyButton from "@/components/Button.vue";
+import Button from "@/components/Button.vue";
+import RepositoryDetails from "@/components/RepositoryDetails.vue";
+import Tile from "@/components/Tile.vue";
+import { LucideBookCopy, LucideCode, LucideGitPullRequest } from "lucide-vue-next";
+import HorizontalRule from "@/components/HorizontalRule.vue";
 
 const route = useRoute();
 const owner = route.params.owner as string;
 const repo = route.params.repo as string;
 const branch = route.params.branch as string;
 
-const { commits, fetchCommits } = useGithubStore();
+const { commits, fetchCommits, repoData, fetchRepo } = useGithubStore();
 const {showModal} = useModalStore()
 
 const isLoading = ref(true);
@@ -77,9 +80,9 @@ function debounce(fn: () => void, delay: number) {
 const debouncedMeasure = debounce(measureCommitHeight, 200);
 
 onMounted(async () => {
+    fetchRepo(owner,repo)
     try {
         await fetchCommits(owner, repo);
-        console.log("Fetched commits:", commits);
     } catch (err) {
         error.value = (err as Error).message;
     } finally {
@@ -104,44 +107,45 @@ watch(filteredCommits, async (newVal) => {
 
 
 <template>
-    <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <!-- Top Controls -->
-        <div class="mb-5">
-            <router-link :to="{ name: 'Repositories'}">
-                <LucideArrowLeft />
-            </router-link>
-        </div>
+    <main class="p-8">
+        <RepositoryDetails :repo="repoData.current"/>
+
+        <HorizontalRule/>
+
         <div class="flex flex-wrap gap-3 justify-between items-center mb-6">
             <!-- Left Buttons -->
             <div class="flex flex-wrap gap-3">
                 <router-link
                     :to="{ name: 'Repository', params: { username: owner, name: repo, branch: branch } }"
                     custom
-                    v-slot="{ navigate, href, isActive, isExactActive }"
+                    v-slot="{ navigate }"
                 >
-                    <MyButton variant="normal" @click="navigate" class="cursor-pointer">
+                    <Button variant="normal" @click="navigate" class="cursor-pointer">
+                        <LucideCode class="stroke-zinc-100" :size="20"/>
                         Source
-                    </MyButton>
+                    </Button>
                 </router-link>
 
                 <router-link
                     :to="`/repos/${owner}/${repo}/pull-requests`"
                     custom
-                    v-slot="{ navigate, href, isActive, isExactActive }"
+                    v-slot="{ navigate }"
                 >
-                    <MyButton variant="normal" @click="navigate" class="cursor-pointer">
+                    <Button variant="normal" @click="navigate" class="cursor-pointer">
+                        <LucideGitPullRequest class="stroke-zinc-100" :size="20"/>
                         Pull Request
-                    </MyButton>
+                    </Button>
                 </router-link>
             </div>
 
             <!-- Clone Button -->
-            <MyButton
+            <Button
                 variant="primary"
                 @click="showModal(CloneModal, { owner, repo }, {showCloseX: true})"
             >
+                <LucideBookCopy class="stroke-zinc-100" :size="20"/>
                 Clone
-            </MyButton>
+            </Button>
         </div>
 
 
@@ -149,9 +153,9 @@ watch(filteredCommits, async (newVal) => {
 
         <!-- Header with Branch & Repo -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h1 class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
-                Commits <span class="text-primary text-2xl ml-2 break-words">{{ owner }}/{{ repo }}</span>
-            </h1>
+            <h2 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
+                Commits
+            </h2>
             <BranchSelect
                 label=""
                 :options="branchOptions"
@@ -161,25 +165,25 @@ watch(filteredCommits, async (newVal) => {
         </div>
 
         <!-- Commit Box -->
-        <div
-            class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden pb-6"
+        <Tile
+            class="overflow-hidden"
         >
 
-        <div class="max-h-[70vh] overflow-auto px-6 py-4 flex gap-6">
-            <div
-                v-if="!isLoading && filteredCommits.length"
-                class="pt-6 w-auto hidden md:block"
-            >
-                <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
-            </div>
+            <div class="px-6 py-4 flex gap-6">
+                <div
+                    v-if="!isLoading && filteredCommits.length"
+                    class="pt-6 w-auto hidden md:block"
+                >
+                    <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
+                </div>
 
 
-            <div class="flex-1 min-w-0">
+                <div class="flex-1 min-w-0">
                     <div v-if="isLoading" class="flex-1 min-w-0 space-y-4">
-                        <Loading
+                        <LoadingTile
                             v-for="n in 5"
                             :key="n"
-                            class="h-[96px] w-full rounded-lg shadow-sm border"
+                            class="h-[96px] w-full rounded-lg shadow-sm"
                         />
                     </div>
                     <div v-else-if="error" class="text-red-600 dark:text-red-400">{{ error }}</div>
@@ -190,7 +194,7 @@ watch(filteredCommits, async (newVal) => {
                     </ul>
                 </div>
             </div>
-        </div>
+        </Tile>
 
 
     </main>

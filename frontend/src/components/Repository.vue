@@ -3,7 +3,7 @@ import type Repo from "@/model/Repo";
 import { useLinguistStore } from "@/stores/linguist";
 import { onMounted, reactive, ref } from "vue";
 import Tile from "./Tile.vue";
-import { LucidePencil, LucideTrash } from "lucide-vue-next";
+import { LucideBook, LucideBookLock, LucidePencil, LucideTrash } from "lucide-vue-next";
 import LanguageIcon from "./LanguageIcon.vue";
 import { api } from "@/api";
 
@@ -46,10 +46,12 @@ onMounted(() => {
     <Tile class="flex flex-col gap-4 grow">
         <router-link
             :to="`/repos/${repo.owner.login}/${repo.name}/commits/${repo.default_branch}`"
-            class="flex"
+            class="flex w-fit"
         >
-            <h3 class="text-xl font-bold">
-                {{ repo.name }}
+            <h3 class="text-xl font-bold flex items-center gap-2">
+                <LucideBookLock class="stroke-primary" v-if="repo.visibility === 'private'"/>
+                <LucideBook class="stroke-primary" v-else/>
+                <span class="text-primary underline">{{ repo.name }}</span>
             </h3>
         </router-link>
         <div class="grow">
@@ -60,7 +62,7 @@ onMounted(() => {
         </div>
         <div class="flex">
             <div class="ml-2 flex gap-2 items-center">
-                <LanguageIcon v-for="(lang,i) in state.languages" :language="lang" :key="i" />
+                <LanguageIcon v-for="(lang,i) in state.languages" :language="lang" :key="i" :size="20"/>
             </div>
             <!-- <div v-if="repo.language" class="ml-2 flex gap-2 items-center">
                 <div class="rounded-full w-4 h-4" :style="`background-color: ${langColor};`"></div>
