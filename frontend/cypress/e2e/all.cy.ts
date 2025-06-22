@@ -22,8 +22,9 @@ describe('All test, ready?', () => {
     // const password = Cypress.env('password');
     const token = Cypress.env('token')
     const owner = 'vlasticka-lab'; // replace with a valid user/org in your test data
-    const repo = 'new'; // replace with a valid repo name
+    let repo = 'Hello'; // replace with a valid repo name
     const branch = 'main'; // replace with a real branch
+    const editedRepoName = repo+"123"
 
     beforeEach(() => {
         cy.visit('/')
@@ -44,21 +45,21 @@ describe('All test, ready?', () => {
         }catch (e){
             console.log(e)
         }
-    })
+    });
 
     it('Change theme to dark mode', () => {
         cy.get('[data-cy="dropDown"]').click()
         cy.get('[data-cy="dark"]').click()
         cy.get('[data-cy="dropDown"]').click()
         cy.get('body').should('have.class', 'dark')
-    })
+    });
 
     it('Change theme to light mode', () => {
         cy.get('[data-cy="dropDown"]').click()
         cy.get('[data-cy="light"]').click()
         cy.get('[data-cy="dropDown"]').click()
         cy.get('body').should('not.have.class', 'dark')
-    })
+    });
 
     it('Change theme to system mode', () => {
         cy.get('[data-cy="dropDown"]').click()
@@ -66,21 +67,34 @@ describe('All test, ready?', () => {
         cy.get('[data-cy="dropDown"]').click()
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
             if (prefersDark) {
-                // testuj něco pro dark
                 cy.get('body').should('have.class', 'dark')
             } else {
-                // testuj něco pro light
                 cy.get('body').should('not.have.class', 'dark')
             }
-    })
+    });
 
-    // it('Add repository', () => {
-    //     cy.visit('/repositories')
-    //     cy.get('[data-cy="add"]').click()
-    //     cy.get('[data-cy="name"]').find('input').type("Hello")
-    //     console.log(Cookies.get(TOKEN_COOKIE_NAME) || "")
-    //     cy.get('[data-cy="yes"]').click()
-    // })
+    it('Add repository', () => {
+        cy.visit('/repositories')
+        cy.get('[data-cy="add"]').click()
+        cy.get('[data-cy="name"]').type(repo)
+        cy.get('[data-cy="readme"]').click()
+        cy.get('[data-cy="yes"]').click()
+        cy.get('h3').contains(repo).first()
+    });
+
+    it('Edit repository', () => {
+        cy.visit('/repositories')
+        cy.get('[data-cy="edit"]').first().click()
+        cy.intercept('GET', '/repos/*/*').as('getRepo')
+        cy.wait('@getRepo')
+        cy.get('[data-cy="name"]').type("123")
+        cy.intercept('PATCH', '/repos/*/*').as('patchHelloRepo')
+        cy.get('[data-cy="yes"]').click()
+        cy.wait('@patchHelloRepo')
+        cy.visit('/repositories')
+        cy.get('h3').contains(editedRepoName).first()
+        repo = editedRepoName
+    });
 
     it('Test source', () => {
         // Visit the commit page
@@ -192,5 +206,15 @@ describe('All test, ready?', () => {
         cy.get('[data-cy="clone-modal"]').should('not.exist');
     });
 
+    it('Delete repository', () => {
+        cy.visit('/repositories')
+        cy.get('[data-cy="delete"]').first().click()
+        cy.get('code').contains(`${owner}/${repo}`)
+        cy.get('[data-cy="repository-name-input"]').type(`${owner}/${repo}`)
+        cy.intercept('GET', '/user/repos*').as('getUserRepos')
+        cy.get('[data-cy="confirm-delete"]').click()
+        cy.wait('@getUserRepos')
+        cy.get('h3').should('not.contain', repo)
+    });
 
-})
+});

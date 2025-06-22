@@ -126,7 +126,7 @@ const modalRef = useTemplateRef("modalRef");
                 :default-value="state.visibility"
                 :icon="LucideEye"
             />
-            <Input v-if="!repo" label="Initialize with README.md file" v-model="state.initWithReadme" type="checkbox"/>
+            <Input data-cy="readme" v-if="!repo" label="Initialize with README.md file" v-model="state.initWithReadme" type="checkbox"/>
             </div>
             <div class="flex justify-evenly px-8 gap-16">
                 <Button
