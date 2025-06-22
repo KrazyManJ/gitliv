@@ -44,14 +44,14 @@ watch(() => state.isVisible, (visible) => {
     <Transition name="fade">
         <div
             v-if="state.isVisible"
-            class="fixed inset-0 flex items-center justify-center z-50 bg-zinc-900/15 backdrop-blur-xs p-4"
+            class="fixed inset-0 flex items-center justify-center z-40 bg-zinc-900/15 backdrop-blur-xs p-4"
             @click="handleModalOutsideClick"
             ref="modalRef"
             @keyup="handleModalKeyUp"
         >
             <Tile class="max-w-lg w-full shadow-xl">
-                <div v-if="state.options.canClose" class="flex justify-end">
-                    <LucideX :size="16" class="stroke-red-400"/>
+                <div v-if="state.options.showCloseX && state.options.canClose" class="flex justify-end">
+                    <LucideX :size="16" class="stroke-red-400 cursor-pointer" @click="hideModal"/>
                 </div>
                 <component :is="state.content" v-bind="state.props"/>
             </Tile>
