@@ -53,9 +53,9 @@ onMounted(async () => {
         :class="DEVICON_MAP[language.toLowerCase()]"
         :style="`color: ${state.color}; font-size: ${size}px`"/>
     <svg
-        view-box="0 0 24 24"
         :width="size"
         :height="size"
+        viewBox="0 0 24 24"
         v-if="simpleIconPath != null"
         :name="language"
         :style="`fill: ${state.color}`"

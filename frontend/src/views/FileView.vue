@@ -3,7 +3,6 @@ import { useGithubStore } from "@/stores/github.ts";
 import { onMounted, ref } from "vue";
 import { storeToRefs } from "pinia";
 import { LucideArrowLeft } from "lucide-vue-next";
-import File from "@/components/File.vue";
 
 const store = useGithubStore();
 const { fetchFile, fileData } = store;
@@ -44,7 +43,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
+    <main class="p-8 min-h-screen">
         <!-- Loading -->
         <div v-if="isLoading" class="space-y-4">
             <div class="w-64 h-8 bg-zinc-300 dark:bg-zinc-700 rounded-lg animate-pulse" />

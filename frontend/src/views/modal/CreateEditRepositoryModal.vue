@@ -9,7 +9,7 @@ import { useGithubAuthStore } from "@/stores/githubAuth";
 import { useModalStore } from "@/stores/modal";
 import { usePopupStore } from "@/stores/popup";
 import type { AxiosError } from "axios";
-import { LucideSave, LucideX } from "lucide-vue-next";
+import { LucideEye, LucideLetterText, LucidePencil, LucideSave, LucideX } from "lucide-vue-next";
 import { computed, onMounted, reactive, useTemplateRef } from "vue";
 
 type RepositoryVisibility = "public" | "private"
@@ -61,7 +61,7 @@ const submit = async () => {
         const message = data?.message || error.message
         showPopup("error",`Error while ${repo ? "adding" : "editing"} repository: ${message}`)
     }
-    hideModal()
+    hideModal("success")
 };
 
 const nameRules: Rule[] = [
@@ -109,10 +109,12 @@ const modalRef = useTemplateRef("modalRef");
                 :rules="nameRules"
                 ref="modalRef"
                 class="font-mono"
+                :icon="LucidePencil"
             />
             <Input
                 label="Description" v-model="state.description"
                 placeholder="No description provided..."
+                :icon="LucideLetterText"
             />
             <Select
                 label="Visibility"
@@ -122,6 +124,7 @@ const modalRef = useTemplateRef("modalRef");
                     private: 'Private',
                 }"
                 :default-value="state.visibility"
+                :icon="LucideEye"
             />
             <Input v-if="!repo" label="Initialize with README.md file" v-model="state.initWithReadme" type="checkbox"/>
             </div>

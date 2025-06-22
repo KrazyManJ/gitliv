@@ -1,14 +1,14 @@
 <script setup lang="ts">
 import type Commit from "@/model/Commit.ts";
+import Tile from "./Tile.vue";
 
 interface CommitProps {
     commit: Commit;
-    variant?: "primary" | "secondary";
     repoName: string;
     branch: string;
 }
 
-const { commit, variant = "primary", repoName, branch } = defineProps<CommitProps>();
+const { commit, repoName, branch } = defineProps<CommitProps>();
 
 const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -28,15 +28,7 @@ const byLineMinWidth = 180;
         :to="`/repos/${commit.commit.author.name ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
         class="block group no-underline"
     >
-    <div
-        :class="[
-      variant === 'primary'
-        ? 'bg-zinc-50 border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700'
-        : 'border-zinc-300 bg-zinc-100 dark:bg-zinc-700 dark:border-zinc-600',
-      'p-4 rounded-lg border shadow-sm min-h-[96px]',
-    ]"
-        v-tw-merge
-    >
+    <Tile variant="secondary" class="min-h-[96px]">
         <div class="flex items-center gap-4 min-w-0">
             <div class="flex items-center gap-3 flex-1 min-w-0 overflow-hidden">
                 <img
@@ -73,7 +65,7 @@ const byLineMinWidth = 180;
                 {{ formatDate(commit.commit.author.date) }}
             </div>
         </div>
-    </div>
+    </Tile>
     </RouterLink>
 </template>
 
