@@ -9,6 +9,7 @@ import {
     LucideChevronDown,
     LucideChevronUp,
 } from "lucide-vue-next";
+import { api } from "@/api";
 
 const route = useRoute();
 const commit = ref<Commit | null>(null);
@@ -16,8 +17,8 @@ const expandedFiles = ref<Record<string, boolean>>({});
 
 const fetchCommit = async () => {
     const { owner, repo, sha } = route.params;
-    const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/commits/${sha}`);
-    commit.value = await res.json();
+    const res = api.get(`https://api.github.com/repos/${owner}/${repo}/commits/${sha}`);
+    commit.value = (await res).data;
 };
 
 const toggleFile = (filename: string) => {
