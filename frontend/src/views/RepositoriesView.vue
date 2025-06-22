@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useGithubStore } from "@/stores/github";
 import Repository from "@/components/Repository.vue";
-import { LucideBookPlus, LucidePlus, LucideSearch } from "lucide-vue-next";
+import { LucideBookPlus, LucideSearch } from "lucide-vue-next";
 import { useModalStore } from "@/stores/modal";
 import CreateEditRepositoryModal from "./modal/CreateEditRepositoryModal.vue";
 import { onMounted, reactive } from "vue";

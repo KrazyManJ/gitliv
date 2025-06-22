@@ -7,15 +7,12 @@ import {
     LucidePencil,
     LucideTrash2,
     LucideChevronDown,
-    LucideChevronUp, LucideArrowLeft,
+    LucideChevronUp,
 } from "lucide-vue-next";
 
 const route = useRoute();
 const commit = ref<Commit | null>(null);
 const expandedFiles = ref<Record<string, boolean>>({});
-const username = route.params.username as string;
-const name = route.params.name as string;
-const branch = route.params.branch as string;
 
 const fetchCommit = async () => {
     const { owner, repo, sha } = route.params;
