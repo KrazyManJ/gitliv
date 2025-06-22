@@ -52,7 +52,7 @@ const handleClick = async () => {
             <p class="select-none pointer-none mb-2 text-center text-sm">
                 To delete repository, enter <InlineCode>{{ fullRepoName }}</InlineCode> and confirm below.
             </p>
-            <Input v-model="state.confirmInput" />
+            <Input data-cy="repository-name-input" v-model="state.confirmInput" />
         </div>
         <div class="flex justify-evenly px-8 gap-16">
             <Button
@@ -64,6 +64,7 @@ const handleClick = async () => {
                 Cancel
             </Button>
             <Button
+                data-cy="confirm-delete"
                 variant="important"
                 text-style="mono"
                 @click="handleClick"

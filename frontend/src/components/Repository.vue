@@ -69,10 +69,10 @@ onMounted(() => {
             </div> -->
             <div class="grow" />
             <div class="flex gap-4">
-                <button @click="() => emit('deleteButtonClick',repo)" class="cursor-pointer">
+                <button data-cy="delete" @click="() => emit('deleteButtonClick',repo)" class="cursor-pointer">
                     <LucideTrash/>
                 </button>
-                <button @click="() => emit('editButtonClick',repo)" class="cursor-pointer">
+                <button data-cy="edit" @click="() => emit('editButtonClick',repo)" class="cursor-pointer">
                     <LucidePencil/>
                 </button>
                 <!-- <router-link
