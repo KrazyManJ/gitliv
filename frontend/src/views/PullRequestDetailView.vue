@@ -9,14 +9,16 @@ import {
     LucidePencil,
     LucideTrash2,
     LucideChevronDown,
-    LucideChevronUp,
-    LucideArrowLeft
+    LucideChevronUp
 } from "lucide-vue-next";
 import CommitComponent from "@/components/Commits.vue";
 import { useGithubStore } from "@/stores/github.ts";
-import CloneModal from "@/views/modal/CloneModal.vue";
 import MyButton from "@/components/Button.vue";
 import Loading from "@/components/LoadingTile.vue";
+import Tile from "@/components/Tile.vue";
+import { usePopupStore } from '@/stores/popup'; // import popup store
+
+const popupStore = usePopupStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -48,7 +50,9 @@ async function fetchPullRequestData() {
         commits.value = await githubStore.fetchPullRequestCommits(owner, repo, prNumber);
         files.value = await githubStore.fetchPullRequestFiles(owner, repo, prNumber);
     } catch (e: unknown) {
-        error.value = e instanceof Error ? e.message : String(e);
+        const msg = (e as Error).message || "Failed to load data.";
+        error.value = msg;
+        popupStore.showPopup("error", msg);
     } finally {
         isLoading.value = false;
     }
@@ -56,6 +60,7 @@ async function fetchPullRequestData() {
 
 const mergePullRequest = async () => {
     if (!pullRequest.value) return;
+
     mergeStatus.value = 'loading';
     notification.value = null;
 
@@ -64,37 +69,39 @@ const mergePullRequest = async () => {
         mergeStatus.value = 'success';
         notification.value = "Pull request merged successfully! Redirecting...";
 
+        // ✅ Show success popup
+        popupStore.showPopup("success", "Pull request merged successfully!");
+
         // Update PR state locally after merge:
         pullRequest.value.state = "closed";
 
-        // Redirect back to PR list after 2 seconds
+        // Redirect after delay
         setTimeout(() => {
-            router.replace(`/repos/${owner}/${repo}/pull-requests`)
+            router.replace(`/repos/${owner}/${repo}/pull-requests`);
         }, 2000);
-    } catch {
+    } catch (e) {
         mergeStatus.value = 'error';
         notification.value = "Failed to merge pull request.";
+
+        // ✅ Show error popup
+        const msg = (e as Error).message || "Failed to merge pull request.";
+        popupStore.showPopup("error", msg);
     }
 };
+
 
 onMounted(fetchPullRequestData);
 </script>
 
 <template>
-    <main class="p-8 bg-zinc-50 dark:bg-zinc-900 min-h-screen text-zinc-800 dark:text-zinc-100">
-        <div v-if="error" class="text-center py-10 text-red-600 dark:text-red-400">{{ error }}</div>
-
-        <div v-else>
-            <div class="mb-5">
-                <router-link :to="{ name: 'Pull Requests', params: { owner:owner, repo:repo, branch:'main' }}">
-                    <LucideArrowLeft />
-                </router-link>
-            </div>
+    <main class="p-8">
+        <div>
             <!-- Pull Request Header -->
             <div class="flex justify-between items-center mb-4">
                 <h1 class="text-3xl font-bold text-zinc-900 dark:text-zinc-100">
                     {{ pullRequest?.title }}
                 </h1>
+
                 <MyButton
                     v-if="pullRequest?.state === 'open'"
                     variant="primary"
@@ -105,18 +112,11 @@ onMounted(fetchPullRequestData);
                 </MyButton>
             </div>
 
-            <!-- Notification Message -->
-            <div
-                v-if="notification"
-                class="mt-4 p-3 rounded text-center text-white"
-                :class="{
-          'bg-green-600': mergeStatus === 'success',
-          'bg-red-600': mergeStatus === 'error'
-        }"
-            >
-                {{ notification }}
-            </div>
-
+            <p class="text-sm text-zinc-600 dark:text-zinc-400">
+                <strong>{{ pullRequest?.head.ref }}</strong>
+                <span class="mx-1">→</span>
+                <strong>{{ pullRequest?.base.ref }}</strong>
+            </p>
             <p class="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
                 #{{ pullRequest?.number }} opened by <strong>{{ pullRequest?.user.login }}</strong>
             </p>
@@ -124,8 +124,8 @@ onMounted(fetchPullRequestData);
             <!-- Commits Section -->
             <section class="mb-10">
                 <h2 class="text-xl font-semibold mb-4">Commits ({{ commits.length }})</h2>
-                <div
-                    class="border border-zinc-300 dark:border-zinc-700 rounded-lg bg-zinc-100 dark:bg-zinc-800 overflow-hidden max-h-[70vh] overflow-auto"
+                <Tile
+                    class="overflow-hidden"
                 >
                     <div v-if="isLoading" class="space-y-6 p-6">
                         <Loading
@@ -136,10 +136,10 @@ onMounted(fetchPullRequestData);
                     </div>
                     <ul v-else class="divide-y divide-zinc-200 dark:divide-zinc-700">
                         <li v-for="commit in commits" :key="commit.sha" class="p-6">
-                            <CommitComponent :commit="commit" :repo-name="repo" />
+                            <CommitComponent :commit="commit" :repo-name="repo" :branch="commit.branch?.toString() ?? 'main'" :owner="owner"/>
                         </li>
                     </ul>
-                </div>
+                </Tile>
             </section>
 
             <!-- Files Changed Section -->

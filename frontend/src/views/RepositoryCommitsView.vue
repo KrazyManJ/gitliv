@@ -13,6 +13,9 @@ import RepositoryDetails from "@/components/RepositoryDetails.vue";
 import Tile from "@/components/Tile.vue";
 import { LucideBookCopy, LucideCode, LucideGitPullRequest } from "lucide-vue-next";
 import HorizontalRule from "@/components/HorizontalRule.vue";
+import { usePopupStore } from '@/stores/popup'; // import popup store
+
+const popupStore = usePopupStore();
 
 const route = useRoute();
 const owner = route.params.owner as string;
@@ -84,7 +87,9 @@ onMounted(async () => {
     try {
         await fetchCommits(owner, repo);
     } catch (err) {
-        error.value = (err as Error).message;
+        const msg = (err as Error).message || "Failed to load data.";
+        error.value = msg;
+        popupStore.showPopup("error", msg); // ✅ Move this here
     } finally {
         isLoading.value = false;
         await measureCommitHeight();
@@ -186,10 +191,9 @@ watch(filteredCommits, async (newVal) => {
                             class="h-[96px] w-full rounded-lg shadow-sm"
                         />
                     </div>
-                    <div v-else-if="error" class="text-red-600 dark:text-red-400">{{ error }}</div>
                     <ul v-else ref="commitListRef" class="space-y-4">
                         <li v-for="commit in filteredCommits" :key="commit.sha" class="commit-item">
-                            <Commit :commit="commit" :repo-name="repo" :branch="branch"/>
+                            <Commit :commit="commit" :repo-name="repo" :branch="branch" :owner="owner"/>
                         </li>
                     </ul>
                 </div>

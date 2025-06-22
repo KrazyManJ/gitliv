@@ -42,6 +42,7 @@ const state = reactive<{
             <Button
                 variant="primary"
                 text-style="mono"
+                data-cy="add"
                 @click="showModal(CreateEditRepositoryModal,{},{onHide: fetchRepos})"
             >
                 <LucideBookPlus class="stroke-zinc-100"/> Create a Repository

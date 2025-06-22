@@ -6,9 +6,10 @@ interface CommitProps {
     commit: Commit;
     repoName: string;
     branch: string;
+    owner: string;
 }
 
-const { commit, repoName, branch } = defineProps<CommitProps>();
+const { commit, repoName, branch, owner } = defineProps<CommitProps>();
 
 const formatDate = (isoDate: string) => {
     const date = new Date(isoDate);
@@ -25,7 +26,7 @@ const byLineMinWidth = 180;
 
 <template>
     <RouterLink
-        :to="`/repos/${commit.author?.login ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
+        :to="`/repos/${owner ?? 'unknown-owner'}/${repoName}/${branch}/commit/${commit.sha}`"
         class="block group no-underline"
     >
     <Tile variant="secondary" class="min-h-[96px]">
@@ -37,6 +38,15 @@ const byLineMinWidth = 180;
                     alt="User avatar"
                     class="w-10 h-10 rounded-full object-cover flex-shrink-0"
                 />
+                <div v-else class="inline-block rounded-full shadow-sm"> <!-- shadow layer -->
+                    <div class="bg-white rounded-full p-2 w-14 h-14 flex items-center justify-center"> <!-- white circle -->
+                        <img
+                            src="/icon.svg"
+                            alt="App Logo"
+                            class="w-12 h-12 grayscale opacity-12"
+                        />
+                    </div>
+                </div>
                 <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
                     <div
                         class="font-semibold text-base text-gray-900 dark:text-white line-clamp-2 overflow-hidden"

@@ -22,7 +22,7 @@ describe('All test, ready?', () => {
     // const password = Cypress.env('password');
     const token = Cypress.env('token')
     const owner = 'vlasticka-lab'; // replace with a valid user/org in your test data
-    let repo = 'Hello'; // replace with a valid repo name
+    let repo = 'TestingRepo'; // replace with a valid repo name
     const branch = 'main'; // replace with a real branch
     const editedRepoName = repo+"123"
 

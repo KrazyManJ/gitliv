@@ -36,7 +36,16 @@ onMounted(fetchCommit);
             <div class="mb-6">
                 <!-- Top: User Info -->
                 <div class="flex items-center gap-4 mb-4">
-                    <img :src="commit.author?.avatar_url" alt="Author Avatar" class="w-14 h-14 rounded-full" />
+                    <img v-if="commit.author?.avatar_url" :src="commit.author.avatar_url" alt="Author Avatar" class="w-14 h-14 rounded-full" />
+                    <div v-else class="inline-block rounded-full shadow-sm"> <!-- shadow layer -->
+                        <div class="bg-white rounded-full p-2 w-14 h-14 flex items-center justify-center"> <!-- white circle -->
+                            <img
+                                src="/icon.svg"
+                                alt="App Logo"
+                                class="w-12 h-12 grayscale opacity-12"
+                            />
+                        </div>
+                    </div>
                     <span class="text-4xl font-bold text-zinc-900 dark:text-zinc-100">
       {{ commit.commit.author.name }}
     </span>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type PullRequest from '@/model/PullRequest';
+import Tile from "@/components/Tile.vue";
 
 interface PullRequestProps {
     pullRequest: PullRequest;
@@ -25,15 +26,7 @@ const formatDate = (isoDate: string) => {
         :to="`/repos/${pullRequest.user.login ?? 'unknown-owner'}/${repoName}/pull-requests/${pullRequest.number}`"
         class="block group no-underline"
     >
-    <div
-        :class="[
-      variant === 'primary'
-        ? 'bg-zinc-50 border-zinc-300 dark:bg-zinc-800 dark:border-zinc-700'
-        : 'border-zinc-300 bg-zinc-100 dark:bg-zinc-700 dark:border-zinc-600',
-      'p-4 rounded-lg border shadow-sm min-h-[96px] flex items-center justify-between'
-    ]"
-        v-tw-merge
-    >
+        <Tile variant="secondary" class="min-h-[96px] flex items-center justify-between">
         <!-- Left side: PR title and user avatar + login -->
         <div class="flex items-center gap-4 min-w-0 overflow-hidden">
             <img
@@ -67,6 +60,6 @@ const formatDate = (isoDate: string) => {
                 {{ formatDate(pullRequest.created_at) }}
             </div>
         </div>
-    </div>
+        </Tile>
     </RouterLink>
 </template>
