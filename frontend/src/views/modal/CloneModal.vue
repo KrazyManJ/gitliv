@@ -45,15 +45,15 @@ const copyToClipboard = async (text: string | undefined) => {
 // }
 
 onMounted(() => {
-   fetchRepo(props.owner, props.repo).then(() => {
-       isLoading.value = false
-   })
+    fetchRepo(props.owner, props.repo).then(() => {
+        isLoading.value = false
+    })
 })
 
 </script>
 
 <template>
-    <div class="flex gap-6 mb-3">
+    <div class="flex gap-6 mb-3" >
         <div v-for="ch of choice">
             <button class="mb-0.5 text-lg cursor-pointer" @click="madeChoice = ch">{{ch}}</button>
             <hr v-if="ch == madeChoice" class="w-full h-1 bg-primary">
@@ -69,7 +69,7 @@ onMounted(() => {
             <LoadingTile class="w-80 h-4 rounded"/>
         </div>
     </div>
-    <div v-else>
+    <div v-else data-cy="clone-modal">
         <div v-if="madeChoice == choice.HTTPS">
             <div class="flex mt-2 gap-5">
                 <div>{{repoData.current?.clone_url}}</div>
@@ -78,7 +78,7 @@ onMounted(() => {
             </div>
             <div class="mt-3 flex flex-col">
                 <span class="text-gray-400 text-sm">Clone using the web URL.</span>
-<!--                <span class="text-gray-400 text-sm">Recommended option by web developers for beginners.</span>-->
+                <!--                <span class="text-gray-400 text-sm">Recommended option by web developers for beginners.</span>-->
             </div>
         </div>
         <div v-if="madeChoice == choice.SSH">
@@ -109,7 +109,7 @@ onMounted(() => {
             >
                 Open in Visual Studio Code <LucideExternalLink/>
             </a>
-<!--            <button @click="downloadZip()">Download a ZIP file</button>-->
+            <!--            <button @click="downloadZip()">Download a ZIP file</button>-->
         </div>
     </div>
 </template>

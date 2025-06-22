@@ -81,7 +81,7 @@ function cancel() {
 </script>
 
 <template>
-    <div class="p-6 space-y-4">
+    <div class="p-6 space-y-4" data-cy="pull-request-modal">
         <h2 class="text-xl font-bold text-zinc-900 dark:text-zinc-100">Create a pull request</h2>
 
         <div class="flex items-center gap-2">
@@ -89,14 +89,14 @@ function cancel() {
                 v-model="fromBranch"
                 :label="'From branch'"
                 :options="branchNames"
-                blank-label="Select source"
+                blank-label="Source"
             />
             <span class="text-xl text-zinc-600">→</span>
             <Select
                 v-model="toBranch"
                 :label="'To branch'"
                 :options="branchNames"
-                blank-label="Select destination"
+                blank-label="Destination"
             />
         </div>
 
@@ -116,7 +116,7 @@ function cancel() {
         />
 
         <div class="flex justify-end gap-2">
-            <Button @click="cancel" variant="normal">Cancel</Button>
+            <Button @click="cancel" variant="normal"  data-cy="cancel-pr-button">Cancel</Button>
             <Button
                 variant="primary"
                 :loading="loading"

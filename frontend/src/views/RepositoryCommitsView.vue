@@ -138,7 +138,7 @@ watch(filteredCommits, async (newVal) => {
             <!-- Clone Button -->
             <MyButton
                 variant="primary"
-                @click="showModal(CloneModal, { owner, repo })"
+                @click="showModal(CloneModal, { owner, repo }, {showCloseX: true})"
             >
                 Clone
             </MyButton>

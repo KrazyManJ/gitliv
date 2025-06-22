@@ -109,5 +109,82 @@ describe('All test, ready?', () => {
             .should('not.be.empty');
     });
 
+    it('Test pull-request', () => {
+        cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
+
+        // Confirm page loaded by checking title
+        cy.contains('h1', 'Commits').should('exist');
+        cy.contains('span', `${owner}/${repo}`).should('exist');
+
+        // Click the "Source" button
+        cy.get('button').contains('Pull Request').click();
+
+        cy.contains('h1', 'Pull Requests').should('exist');
+        cy.contains('span', `${owner}/${repo}`).should('exist');
+
+        // Click the "New" button
+        cy.get('[data-cy="new-pr-button"]').click();
+
+        // Check if the modal is visible
+        cy.get('[data-cy="pull-request-modal"]').should('be.visible');
+
+        // Click the "Cancel" button
+        cy.get('[data-cy="cancel-pr-button"]').click();
+
+        // Assert the modal is closed
+        cy.get('[data-cy="pull-request-modal"]').should('not.exist');
+    });
+
+    it('Test commit-detail', () => {
+        cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
+
+        // Confirm page loaded by checking title
+        cy.contains('h1', 'Commits').should('exist');
+        cy.contains('span', `${owner}/${repo}`).should('exist');
+
+        cy.get(".commit-item").should("exist");
+
+        // Click the first commit
+        cy.get(".commit-item").first().click();
+
+        cy.get('[data-cy="commit-detail-page"]').should("exist");
+
+        // Check for at least one changed file
+        cy.get("[class*='cursor-pointer'][class*='shadow-sm']").should("exist");
+
+        // Expand one file to verify patch rendering
+        cy.get("[class*='cursor-pointer'][class*='shadow-sm']").first().click();
+        cy.get(".font-mono")
+            .filter((index, el) => {
+                const text = el.textContent || "";
+                return text.includes("+") || text.includes("-");
+            })
+            .should("have.length.greaterThan", 0); // at least one match
+    });
+
+    it('Test clone', () => {
+        cy.visit(`/repos/${owner}/${repo}/commits/${branch}`);
+
+        // Confirm page loaded by checking title
+        cy.contains('h1', 'Commits').should('exist');
+        cy.contains('span', `${owner}/${repo}`).should('exist');
+
+        cy.get('button').contains('Clone').click();
+
+        // Check that the modal appears
+        cy.get('[data-cy="clone-modal"]').should("be.visible");
+
+        // Alternatively, check by selector and partial match
+        cy.get('[data-cy="clone-modal"]')
+            .invoke("text")
+            .should("include", "https://github.com/");
+
+        // Click the close button
+        cy.get('[data-cy="modal-close-button"]').click();
+
+        // Assert modal is gone
+        cy.get('[data-cy="clone-modal"]').should('not.exist');
+    });
+
 
 })

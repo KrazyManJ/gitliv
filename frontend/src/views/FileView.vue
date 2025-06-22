@@ -55,7 +55,9 @@ onMounted(() => {
         <div v-else class="space-y-8 py-4">
             <!-- Back Link -->
             <div class="mb-4">
-                <router-link :to="{ name: 'Repository', params: { username, name, branch } }">
+                <router-link
+                    :to="{ name: 'Repository', params: { username, name, branch } }"
+                    data-cy="back">
                     <LucideArrowLeft class="mr-3 w-6 h-6 text-zinc-600 dark:text-zinc-300" />
                 </router-link>
             </div>
