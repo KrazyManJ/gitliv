@@ -29,7 +29,6 @@ const isLoading = ref(true);
 const error = ref<string | null>(null);
 
 const commitListRef = ref<HTMLElement | null>(null);
-const commitHeight = ref(115);
 
 const selectedBranch = ref("All branches");
 
@@ -61,26 +60,6 @@ const filteredCommits = computed(() => {
     return commits.filter(c => c.branch?.includes(selectedBranch.value));
 });
 
-async function measureCommitHeight() {
-    await nextTick();
-    const listEl = commitListRef.value;
-    if (listEl) {
-        const firstItem = listEl.querySelector(".commit-item") as HTMLElement | null;
-        if (firstItem) {
-            commitHeight.value = firstItem.clientHeight + 16.5;
-        }
-    }
-}
-function debounce(fn: () => void, delay: number) {
-    let timeout: number;
-    return () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            fn();
-        }, delay);
-    };
-}
-const debouncedMeasure = debounce(measureCommitHeight, 200);
 
 onMounted(async () => {
     fetchRepo(owner,repo)
@@ -92,18 +71,6 @@ onMounted(async () => {
         popupStore.showPopup("error", msg); // ✅ Move this here
     } finally {
         isLoading.value = false;
-        await measureCommitHeight();
-    }
-
-    window.addEventListener("resize", debouncedMeasure);
-});
-
-onBeforeUnmount(() => {
-    window.removeEventListener("resize", debouncedMeasure);
-});
-watch(filteredCommits, async (newVal) => {
-    if (newVal.length) {
-        await measureCommitHeight();
     }
 });
 </script>
@@ -179,7 +146,7 @@ watch(filteredCommits, async (newVal) => {
                     v-if="!isLoading && filteredCommits.length"
                     class="pt-6 w-auto hidden md:block"
                 >
-                    <GitGraph :commitSpacing="commitHeight" :commits="filteredCommits" />
+                    <GitGraph :commitSpacing="112" :commits="filteredCommits" />
                 </div>
 
 
