@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import type GitFileFromTree from "@/model/GitFileFromTree.ts";
 import { LucideFolder, LucideFile } from "lucide-vue-next";
-import { useRouter, useRoute, RouterLink } from "vue-router";
+import { useRoute, RouterLink } from "vue-router";
 import {computed} from "vue";
 
-const router = useRouter();
 const route = useRoute();
 
 const props = defineProps<{
@@ -17,22 +16,6 @@ const props = defineProps<{
 const isFolder = props.file.type === "tree";
 
 const currentPath = computed(() => decodeURIComponent((route.params.pathMatch as string) || ""));
-
-const openFolder = (treePath: string | undefined) => {
-    if (treePath) {
-        const newPath = currentPath.value ? `${currentPath.value}/${props.file.path}` : props.file.path;
-
-        router.push({
-            name: 'Repository',
-            params: {
-                username: props.username,
-                name: props.name,
-                branch: props.branch,
-                pathMatch: newPath
-            }
-        });
-    }
-};
 
 const linkData = computed(() => {
     const params = {
