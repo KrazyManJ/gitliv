@@ -63,6 +63,6 @@ const linkData = computed(() => {
         not-last:border-b-1 dark:not-last:border-zinc-700 not-last:border-zinc-300 text-sm ">
         <LucideFolder :size="20" v-if="isFolder"/>
         <LucideFile :size="20" v-else/>
-        <RouterLink :to="linkData" class="hover:text-primary hover:dark:text-primary-light hover:underline">{{ file.path }}</RouterLink>
+        <RouterLink data-cy="file-link" :to="linkData" class="hover:text-primary hover:dark:text-primary-light hover:underline">{{ file.path }}</RouterLink>
     </div>
 </template>

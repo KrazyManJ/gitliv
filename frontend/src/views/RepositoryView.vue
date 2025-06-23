@@ -96,9 +96,9 @@ const branchOptions = computed(() =>
         <RepositoryDetails :repo="repoData.current"/>
 
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-            <h1 class="text-2xl font-bold">
+            <h2 class="text-2xl font-bold">
                 Source
-            </h1>
+            </h2>
             <Select
                 v-model="selectedBranch"
                 :options="branchOptions"
@@ -125,7 +125,6 @@ const branchOptions = computed(() =>
 
             <div v-else class="flex flex-col">
                 <File
-                    data-cy="file"
                     v-for="file in files"
                     :key="file.sha"
                     :file="file"

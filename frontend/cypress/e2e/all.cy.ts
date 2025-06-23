@@ -112,11 +112,11 @@ describe('All test, ready?', () => {
         // Click the "Source" button
         cy.get('button').contains('Source').click();
 
-        cy.contains('h1', 'Source').should('exist');
-        cy.contains('span', `${owner}/${repo}`).should('exist');
+        cy.contains('h1', `${owner}/${repo}`).should('exist');
+        cy.contains('h2', 'Source').should('exist');
 
         // Wait for files to be visible
-        cy.get('[data-cy="file"]').first().click();
+        cy.get('[data-cy="file-link"]').first().click();
 
         cy.get('[data-cy="file-title"]').should('contain.text', '.md');
 
@@ -137,7 +137,7 @@ describe('All test, ready?', () => {
         // Click the "Source" button
         cy.get('button').contains('Pull Request').click();
 
-        cy.contains('h1', 'Pull Requests').should('exist');
+        cy.contains('h2', 'Pull Requests').should('exist');
 
         // Click the "New" button
         cy.get('[data-cy="new-pr-button"]').click();
