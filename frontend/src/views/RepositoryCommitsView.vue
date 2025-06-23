@@ -53,12 +53,22 @@ const branchOptions = computed(() => {
 });
 
 
+// const filteredCommits = computed(() => {
+//     if (selectedBranch.value === "All branches") {
+//         return commits;
+//     }
+//     return commits.filter(c => c.branch?.includes(selectedBranch.value));
+// });
+
 const filteredCommits = computed(() => {
     if (selectedBranch.value === "All branches") {
-        return commits;
+        return [...commits].sort((a, b) => new Date(b.commit.author.date).getTime() - new Date(a.commit.author.date).getTime());
     }
-    return commits.filter(c => c.branch?.includes(selectedBranch.value));
+    return commits
+        .filter(c => c.branch?.includes(selectedBranch.value))
+        .sort((a, b) => new Date(b.commit.author.date).getTime() - new Date(a.commit.author.date).getTime());
 });
+
 
 
 onMounted(async () => {
